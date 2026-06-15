@@ -153,7 +153,7 @@ def render_mapa_clean(coordinates, lat_center, lon_center, label_escola):
 if st.session_state.tela_atual == 1:
     
     # Topbar minimalista
-    st.markdown("###  SysPlan | GovTech Initiative")
+    st.markdown("### 🏢 SysPlan | GovTech Initiative")
     st.divider()
 
     col_form, col_img = st.columns([1.2, 0.8], gap="large")
@@ -163,14 +163,9 @@ if st.session_state.tela_atual == 1:
         st.markdown("Preencha os dados abaixo para descobrirmos as melhores opções de ensino e rotas de transporte escolar na sua região.")
         st.write("")
         
-        # O Backend ainda precisa de Lat/Lon, então mantemos os campos, mas com layout limpo
+        # UX Limpa: Apenas Nome e Endereço em texto
         nome_crianca = st.text_input("Nome da Criança", placeholder="Ex: Maria Clara")
-        
-        c_lat, c_lon = st.columns(2)
-        with c_lat:
-            lat = st.number_input("Latitude (Residência)", value=-27.057617, format="%.6f")
-        with c_lon:
-            lon = st.number_input("Longitude (Residência)", value=-49.522895, format="%.6f")
+        endereco = st.text_input("Endereço Completo", placeholder="Ex: Rua XV de Novembro, 100")
             
         c_turma, c_turno = st.columns(2)
         with c_turma:
@@ -181,20 +176,44 @@ if st.session_state.tela_atual == 1:
         transporte = st.checkbox("Precisa de transporte escolar integrado?", value=True)
         
         st.write("")
-        if st.button(" Buscar Vagas e Rotas Autônomas", use_container_width=True):
-            if nome_crianca == "":
-                st.warning("Por favor, insira o nome da criança.")
+        if st.button("🔍 Buscar Vagas e Rotas Autônomas", use_container_width=True):
+            if nome_crianca == "" or endereco == "":
+                st.warning("Por favor, preencha o nome e o endereço da criança.")
             else:
-                # Salva os dados na memória para a Tela 2 usar
-                st.session_state.payload = {
-                    "id_aluno": nome_crianca,
-                    "lat": lat,
-                    "lon": lon,
-                    "turma": turma,
-                    "turno": turno[1]
-                }
-                ir_para_tela_2()
-                st.rerun() # Força o Streamlit a recarregar a página imediatamente para a Tela 2
+                with st.spinner("📍 Convertendo endereço em coordenadas..."):
+                    try:
+                        # Importa o motor de geocoding
+                        from geopy.geocoders import Nominatim
+                        geolocator = Nominatim(user_agent="nexus_route_udesc")
+                        
+                        # Adiciona a cidade e estado automaticamente para forçar a precisão da busca
+                        busca_completa = f"{endereco}, Ibirama, SC, Brasil"
+                        location = geolocator.geocode(busca_completa, timeout=5)
+                        
+                        if location:
+                            lat_final = location.latitude
+                            lon_final = location.longitude
+                        else:
+                            # Fallback (Plano B): Se o usuário digitar algo muito louco e o mapa não achar,
+                            # jogamos uma coordenada padrão do centro para o MVP não quebrar na apresentação.
+                            st.toast("Endereço exato não encontrado. Utilizando região central como referência.", icon="⚠️")
+                            lat_final = -27.057617
+                            lon_final = -49.522895
+                            time.sleep(2)
+                            
+                        # Salva os dados processados invisivelmente na memória
+                        st.session_state.payload = {
+                            "id_aluno": nome_crianca,
+                            "lat": lat_final,
+                            "lon": lon_final,
+                            "turma": turma,
+                            "turno": turno[1]
+                        }
+                        ir_para_tela_2()
+                        st.rerun() # Força a transição de tela
+                        
+                    except Exception as e:
+                        st.error("Erro no serviço de geolocalização. O servidor de mapas pode estar congestionado.")
 
     with col_img:
         # Card decorativo imitando o seu lado direito do Tailwind
@@ -202,7 +221,7 @@ if st.session_state.tela_atual == 1:
         <div class="card-decorativo">
             <h1 style="font-size: 64px; margin-bottom: 0;">🗺️</h1>
             <h3 style="color: #e1e2e7;">Mapa Interativo</h3>
-            <p style="color: #88919d;">A visualização do bairro e das rotas logísticas aparecerá aqui após o processamento matemático.</p>
+            <p style="color: #88919d;">A visualização do bairro e das rotas logísticas aparecerá aqui após a busca.</p>
         </div>
         """, unsafe_allow_html=True)
 

@@ -81,7 +81,7 @@ with st.sidebar:
 # SERVIDOR OSRM
 # =============================================================================
 # Substitua pelo IP público do Oracle Cloud que está com o OSRM rodando
-OSRM_URL = "http://<IP_ADDRESS>:80/route/v1/driving"
+OSRM_URL = "http://64.181.181.24/route/v1/driving"
 
 # =============================================================================
 # FUNÇÃO: Renderiza o mapa aplicando o tema dinamicamente
@@ -217,7 +217,7 @@ map.on('load', () => {{
 # =============================================================================
 if calcular:
     url = f"{OSRM_URL}/{lon_orig},{lat_orig};{lon_dest},{lat_dest}?overview=full&geometries=geojson"
-    headers = {" Substitua pela sua chave configurada no Nginx"}
+    headers = {"x-api-key": "labind_udesc_2026"}
 
     with st.spinner("Consultando motor de rotas no servidor..."):
         try:

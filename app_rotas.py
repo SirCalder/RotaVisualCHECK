@@ -7,13 +7,13 @@ import json
 # CONFIGURAÇÃO DA PÁGINA
 # =============================================================================
 st.set_page_config(
-    page_title="Nexus Route | Sistema de Roteamento",
-    page_icon="#",
+    page_title="Nexus Route | Sistema de Alocação",
+    page_icon="🗺️",
     layout="wide"
 )
 
-st.title(" Nexus Route: Otimizador Autônomo")
-st.markdown("**Motor de Roteamento Baseado em OSRM (Infraestrutura Customizada)**")
+st.title("🗺️ Nexus Route: Otimizador Autônomo")
+st.markdown("**Sistema Inteligente de Distribuição Escolar e Roteamento Logístico**")
 st.divider()
 
 # =============================================================================
@@ -23,7 +23,7 @@ TEMAS = {
     "Industrial / QGIS (Alto Contraste)": {
         "style": "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
         "bg_html": "#111",
-        "glow_color": "[255, 140, 0, 80]",     # Laranja
+        "glow_color": "[255, 140, 0, 80]",      # Laranja
         "core_color": "[255, 200, 0, 255]",    # Amarelo Ouro
         "orig_color": "[0, 200, 255]",         # Ciano
         "dest_color": "[255, 50, 100]",        # Rosa Choque
@@ -56,37 +56,40 @@ TEMAS = {
 }
 
 # =============================================================================
-# SIDEBAR
+# SIDEBAR - INPUT DO USUÁRIO
 # =============================================================================
 with st.sidebar:
-    st.header(" Parâmetros da Rota")
+    st.header(" Dados do Aluno")
     
-    st.markdown("### Ponto de Origem")
-    lon_orig = st.number_input("Longitude", value=-49.522895, format="%.6f", key="lon_orig")
-    lat_orig = st.number_input("Latitude",  value=-27.057617, format="%.6f", key="lat_orig")
+    id_aluno = st.text_input("Matrícula / Identificador", value="ALUNO-MVP-01")
     
-    st.markdown("### Ponto de Destino")
-    lon_dest = st.number_input("Longitude", value=-49.550954, format="%.6f", key="lon_dest")
-    lat_dest = st.number_input("Latitude",  value=-27.031774, format="%.6f", key="lat_dest")
+    st.markdown("### Endereço (Coordenadas)")
+    lon_aluno = st.number_input("Longitude", value=-49.522895, format="%.6f")
+    lat_aluno = st.number_input("Latitude",  value=-27.057617, format="%.6f")
     
-    st.markdown("---")
-    
-    st.header(" Estilização")
-    tema_selecionado = st.selectbox("Selecione o Tema do Mapa", list(TEMAS.keys()))
+    st.markdown("### Perfil Acadêmico")
+    turma = st.number_input("Turma (Ano Escolar)", min_value=1, max_value=9, value=4)
+    turno = st.number_input("Turno (1=Manhã, 2=Tarde, 3=Noite)", min_value=1, max_value=3, value=3)
     
     st.markdown("---")
-    calcular = st.button("Traçar Rota", type="primary", use_container_width=True)
+    
+    st.header("🎨 Estilização")
+    tema_selecionado = st.selectbox("Selecione o Tema Visual", list(TEMAS.keys()))
+    
+    st.markdown("---")
+    calcular = st.button("Alocar e Traçar Rota", type="primary", use_container_width=True)
 
 # =============================================================================
-# SERVIDOR OSRM
+# CONFIGURAÇÃO DE BACKEND (O MAESTRO)
 # =============================================================================
-# Substitua pelo IP público do Oracle Cloud que está com o OSRM rodando
-OSRM_URL = "http://64.181.181.24/route/v1/driving"
+# Aponta para a porta 80 do Servidor 2 (O Nginx vai redirecionar internamente para o FastAPI)
+API_URL = "http://137.131.134.108/alocar-aluno"
+HEADERS_API = {"x-api-key": "ChallengeUDESC"}
 
 # =============================================================================
-# FUNÇÃO: Renderiza o mapa aplicando o tema dinamicamente
+# FUNÇÃO: Renderiza o mapa mantendo sua animação e SVG customizados
 # =============================================================================
-def render_mapa_clean(coordinates: list, lat_center: float, lon_center: float, tema: dict):
+def render_mapa_clean(coordinates: list, lat_center: float, lon_center: float, tema: dict, label_escola: str):
     coords_json = json.dumps(coordinates)
 
     html = f"""
@@ -133,13 +136,11 @@ for(let i = 0; i < COORDINATES.length - 1; i++) {{
         path: [COORDINATES[i], COORDINATES[i+1]],
         color: interpolateColor(colorOrig, colorDest, factor)
     }});
-    timestamps.push(i * 10); // Timestamps para a animação
+    timestamps.push(i * 10);
 }}
-// Timestamp final para o último ponto
 timestamps.push((COORDINATES.length - 1) * 10);
 const maxTime = timestamps[timestamps.length - 1];
 
-// Dados para a animação de pulso
 const tripData = [{{ path: COORDINATES, timestamps: timestamps }}];
 
 const map = new maplibregl.Map({{
@@ -153,7 +154,6 @@ const map = new maplibregl.Map({{
 }});
 
 map.on('load', () => {{
-  // Construções 3D
   map.addLayer({{
     'id': '3d-buildings',
     'source': 'carto-dark', 
@@ -165,7 +165,6 @@ map.on('load', () => {{
     }}
   }});
 
-  // Criando Marcadores Customizados em SVG
   function createMarker(color, label) {{
       const el = document.createElement('div');
       el.style.display = 'flex';
@@ -174,94 +173,67 @@ map.on('load', () => {{
       
       const r = color[0], g = color[1], b = color[2];
       
-      // Pin Icon (SVG desenhado no JS via concatenação para evitar erros de formatação do Python)
       const svg = '<svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' +
         '<path d="M12 2C8.13 2 5 5.13 5 9C5 14.25 12 22 12 22C12 22 19 14.25 19 9C19 5.13 15.87 2 12 2Z" ' +
         'fill="rgba(' + r + ',' + g + ',' + b + ', 0.9)" stroke="white" stroke-width="2.5"/>' +
         '<circle cx="12" cy="9" r="4" fill="white"/>' +
       '</svg>';
       
-      // Label flutuante abaixo do Pin
       const labelHtml = '<div style="' +
-          'background: rgba(20,20,20,0.85); ' +
-          'color: white; padding: 4px 10px; border-radius: 6px; ' +
+          'background: rgba(20,20,20,0.85); color: white; padding: 4px 10px; border-radius: 6px; ' +
           'font-size: 11px; margin-top: -2px; font-weight: bold; ' +
           'box-shadow: 0 0 10px rgba(' + r + ',' + g + ',' + b + ',0.6); ' +
-          'border: 1px solid rgba(' + r + ',' + g + ',' + b + ',0.4);' +
-      '">' + label + '</div>';
+          'border: 1px solid rgba(' + r + ',' + g + ',' + b + ',0.4);">' + label + '</div>';
 
       el.innerHTML = svg + labelHtml;
       return el;
   }}
 
-  // Adiciona a Origem e Destino com os Ícones HTML/SVG
-  new maplibregl.Marker({{element: createMarker(colorOrig, 'ORIGEM'), anchor: 'bottom'}})
+  // Marcadores Customizados
+  new maplibregl.Marker({{element: createMarker(colorOrig, 'CASA DO ALUNO'), anchor: 'bottom'}})
       .setLngLat(COORDINATES[0])
       .addTo(map);
 
-  new maplibregl.Marker({{element: createMarker(colorDest, 'DESTINO'), anchor: 'bottom'}})
+  new maplibregl.Marker({{element: createMarker(colorDest, '{label_escola}'), anchor: 'bottom'}})
       .setLngLat(COORDINATES[COORDINATES.length - 1])
       .addTo(map);
 
-  // Instância base do Deck.GL
-  const deckOverlay = new deck.MapboxOverlay({{
-    interleaved: false,
-    layers: []
-  }});
+  const deckOverlay = new deck.MapboxOverlay({{ interleaved: false, layers: [] }});
   map.addControl(deckOverlay);
 
-  // LOOP DE RENDERIZAÇÃO ANIMADA
   let currentTime = 0;
   function animate() {{
-      currentTime = (currentTime + 2) % maxTime; // Velocidade da animação
+      currentTime = (currentTime + 2) % maxTime;
 
       deckOverlay.setProps({{
         layers: [
-          // 1. Rota - Sombra/Glow com Gradiente
           new PathLayer({{
             id: 'route-glow',
             data: segmentedPath,
             getPath: d => d.path,
             getColor: d => [d.color[0], d.color[1], d.color[2], 90], 
-            getWidth: 18,
-            widthUnits: 'pixels',
-            jointRounded: true,
-            capRounded: true,
+            getWidth: 18, widthUnits: 'pixels', jointRounded: true, capRounded: true,
           }}),
-
-          // 2. Rota - Núcleo com Gradiente
           new PathLayer({{
             id: 'route-core',
             data: segmentedPath,
             getPath: d => d.path,
             getColor: d => d.color, 
-            getWidth: 4,
-            widthUnits: 'pixels',
-            jointRounded: true,
-            capRounded: true,
+            getWidth: 4, widthUnits: 'pixels', jointRounded: true, capRounded: true,
           }}),
-
-          // 3. Efeito animado do trajeto (TripsLayer)
           new TripsLayer({{
             id: 'route-pulse',
             data: tripData,
             getPath: d => d.path,
             getTimestamps: d => d.timestamps,
-            getColor: [255, 255, 255, 255], // Branco brilhante
-            opacity: 0.9,
-            widthMinPixels: 5,
-            trailLength: maxTime * 0.25, // Tamanho do rastro animado
-            currentTime: currentTime,
-            capRounded: true,
-            jointRounded: true
+            getColor: [255, 255, 255, 255],
+            opacity: 0.9, widthMinPixels: 5, trailLength: maxTime * 0.25,
+            currentTime: currentTime, capRounded: true, jointRounded: true
           }})
         ]
       }});
-
       requestAnimationFrame(animate);
   }}
-
-  // Inicia a animação
   animate();
   map.keyboard.disable();
 }});
@@ -272,53 +244,55 @@ map.on('load', () => {{
     components.html(html, height=620, scrolling=False)
 
 # =============================================================================
-# LÓGICA PRINCIPAL
+# LÓGICA DE ALOCAÇÃO E ROTEAMENTO
 # =============================================================================
 if calcular:
-    url = f"{OSRM_URL}/{lon_orig},{lat_orig};{lon_dest},{lat_dest}?overview=full&geometries=geojson"
-    headers = {"x-api-key": "labind_udesc_2026"}
+    # O Streamlit agora prepara um pacote para o seu Servidor FastAPI, e não pro OSRM
+    payload = {
+        "id_aluno": id_aluno,
+        "lat": lat_aluno,
+        "lon": lon_aluno,
+        "turma": turma,
+        "turno": turno
+    }
 
-    with st.spinner("Consultando motor de rotas no servidor..."):
+    with st.spinner(" Acionando Otimização Matemática e Roteamento Autônomo..."):
         try:
-            response = requests.get(url, headers=headers, timeout=10)
+            # Envio da requisição com o cabeçalho de segurança exigido pelo Nginx
+            response = requests.post(API_URL, json=payload, headers=HEADERS_API, timeout=15)
 
             if response.status_code == 401:
-                st.error(" Acesso Negado: Chave de API inválida.")
-
+                st.error(" Acesso Negado: Chave de segurança inválida.")
+            
             elif response.status_code == 200:
-                data = response.json()
+                dados = response.json()
+                
+                st.success(f" Otimização concluída! O aluno **{dados['aluno_id']}** foi alocado com sucesso.")
+                
+                # Painel de Métricas (Consumindo a resposta pronta do FastAPI)
+                c1, c2, c3, c4 = st.columns(4)
+                c1.metric(" Região Demográfica", f"Zona {dados['zona_identificada']}")
+                c2.metric(" Escola Alocada", dados['escola_alocada'])
+                c3.metric(" Distância Lógica", f"{dados['distancia_km']} km")
+                c4.metric("⏱ Tempo de Rota", f"{dados['tempo_min']} min")
+                
+                st.markdown("<br>", unsafe_allow_html=True)
 
-                if data.get("code") == "Ok":
-                    # Extração de Métricas
-                    distancia_km = data["routes"][0]["distance"] / 1000
-                    tempo_min    = data["routes"][0]["duration"] / 60
-                    
-                    # Painel de Métricas Nativo do Streamlit
-                    col1, col2, col3 = st.columns(3)
-                    col1.metric(" Distância", f"{distancia_km:.2f} km")
-                    col2.metric(" Tempo Estimado", f"{tempo_min:.0f} min")
-                    col3.metric(" Status", "Online (Privado)")
-                    
-                    st.markdown("<br>", unsafe_allow_html=True)
+                # Extrai as coordenadas retornadas pelo Maestro
+                coords = dados['rota_geojson']['coordinates']
+                lons = [c[0] for c in coords]
+                lats = [c[1] for c in coords]
+                lat_center = (min(lats) + max(lats)) / 2
+                lon_center = (min(lons) + max(lons)) / 2
 
-                    # Dados do Mapa
-                    coords = data["routes"][0]["geometry"]["coordinates"]
-                    lons = [c[0] for c in coords]
-                    lats = [c[1] for c in coords]
-                    lat_center = (min(lats) + max(lats)) / 2
-                    lon_center = (min(lons) + max(lons)) / 2
+                # Renderiza o mapa com a escola identificada e a animação
+                tema_atual = TEMAS[tema_selecionado]
+                render_mapa_clean(coords, lat_center, lon_center, tema_atual, dados['escola_alocada'].upper())
 
-                    # Renderização repassando o tema escolhido
-                    tema_atual = TEMAS[tema_selecionado]
-                    render_mapa_clean(coords, lat_center, lon_center, tema_atual)
-
-                else:
-                    st.warning("Nenhum caminho viável encontrado entre os pontos informados.")
             else:
-                st.error(f"Erro no servidor. Código: {response.status_code}")
+                st.error(f"Erro no servidor. Código: {response.status_code} | Detalhe: {response.text}")
 
         except requests.exceptions.RequestException:
-            st.error(" Falha de Conexão. Verifique se o servidor na Oracle está ativo e a porta 80 liberada.")
+            st.error("⚠️ Falha de Conexão. Verifique se o Servidor Maestro está ativo e a porta 80 liberada.")
 else:
-    # Estado inicial limpo
-    st.info(" Ajuste o Tema e as Coordenadas na barra lateral e clique em **Traçar Rota** para iniciar.")
+    st.info("👈 Preencha os dados de residência e perfil escolar do aluno, escolha um tema e clique em **Alocar e Traçar Rota**.")

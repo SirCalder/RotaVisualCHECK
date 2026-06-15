@@ -108,11 +108,39 @@ def render_mapa_clean(coordinates: list, lat_center: float, lon_center: float, t
 <link href="https://unpkg.com/maplibre-gl@3/dist/maplibre-gl.css" rel="stylesheet">
 
 <script>
-const {{ DeckGL, PathLayer, ScatterplotLayer, TextLayer }} = deck;
+const {{ DeckGL, PathLayer, TripsLayer }} = deck;
 
 const COORDINATES = {coords_json};
+const colorOrig = {tema['orig_color']};
+const colorDest = {tema['dest_color']};
 
-const PATH_DATA = [{{ path: COORDINATES }}];
+// Função para interpolar cores para o Gradiente
+function interpolateColor(c1, c2, factor) {{
+    return [
+        Math.round(c1[0] + (c2[0] - c1[0]) * factor),
+        Math.round(c1[1] + (c2[1] - c1[1]) * factor),
+        Math.round(c1[2] + (c2[2] - c1[2]) * factor),
+        255
+    ];
+}}
+
+// Quebrando a rota em segmentos para criar o efeito de gradiente
+const segmentedPath = [];
+const timestamps = [];
+for(let i = 0; i < COORDINATES.length - 1; i++) {{
+    const factor = i / (COORDINATES.length - 1);
+    segmentedPath.push({{
+        path: [COORDINATES[i], COORDINATES[i+1]],
+        color: interpolateColor(colorOrig, colorDest, factor)
+    }});
+    timestamps.push(i * 10); // Timestamps para a animação
+}}
+// Timestamp final para o último ponto
+timestamps.push((COORDINATES.length - 1) * 10);
+const maxTime = timestamps[timestamps.length - 1];
+
+// Dados para a animação de pulso
+const tripData = [{{ path: COORDINATES, timestamps: timestamps }}];
 
 const map = new maplibregl.Map({{
   container: 'map',
@@ -125,85 +153,116 @@ const map = new maplibregl.Map({{
 }});
 
 map.on('load', () => {{
-  // Opcional: Adiciona construções em 3D nativas do MapLibre (funciona melhor nos temas escuros)
+  // Construções 3D
   map.addLayer({{
     'id': '3d-buildings',
-    'source': 'carto-dark', // Nome fictício se não houver fonte vetorizada, mas previne erro
+    'source': 'carto-dark', 
     'type': 'fill-extrusion',
     'paint': {{
         'fill-extrusion-color': '#aaa',
         'fill-extrusion-height': 10,
-        'fill-extrusion-opacity': 0.5
+        'fill-extrusion-opacity': 0.3
     }}
   }});
 
+  // Criando Marcadores Customizados em SVG
+  function createMarker(color, label) {{
+      const el = document.createElement('div');
+      el.style.display = 'flex';
+      el.style.flexDirection = 'column';
+      el.style.alignItems = 'center';
+      
+      const r = color[0], g = color[1], b = color[2];
+      
+      // Pin Icon (SVG desenhado no JS via concatenação para evitar erros de formatação do Python)
+      const svg = '<svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+        '<path d="M12 2C8.13 2 5 5.13 5 9C5 14.25 12 22 12 22C12 22 19 14.25 19 9C19 5.13 15.87 2 12 2Z" ' +
+        'fill="rgba(' + r + ',' + g + ',' + b + ', 0.9)" stroke="white" stroke-width="2.5"/>' +
+        '<circle cx="12" cy="9" r="4" fill="white"/>' +
+      '</svg>';
+      
+      // Label flutuante abaixo do Pin
+      const labelHtml = '<div style="' +
+          'background: rgba(20,20,20,0.85); ' +
+          'color: white; padding: 4px 10px; border-radius: 6px; ' +
+          'font-size: 11px; margin-top: -2px; font-weight: bold; ' +
+          'box-shadow: 0 0 10px rgba(' + r + ',' + g + ',' + b + ',0.6); ' +
+          'border: 1px solid rgba(' + r + ',' + g + ',' + b + ',0.4);' +
+      '">' + label + '</div>';
+
+      el.innerHTML = svg + labelHtml;
+      return el;
+  }}
+
+  // Adiciona a Origem e Destino com os Ícones HTML/SVG
+  new maplibregl.Marker({{element: createMarker(colorOrig, 'ORIGEM'), anchor: 'bottom'}})
+      .setLngLat(COORDINATES[0])
+      .addTo(map);
+
+  new maplibregl.Marker({{element: createMarker(colorDest, 'DESTINO'), anchor: 'bottom'}})
+      .setLngLat(COORDINATES[COORDINATES.length - 1])
+      .addTo(map);
+
+  // Instância base do Deck.GL
   const deckOverlay = new deck.MapboxOverlay({{
     interleaved: false,
-    layers: [
-      // 1. Rota - Sombra/Glow
-      new PathLayer({{
-        id: 'route-glow',
-        data: PATH_DATA,
-        getPath: d => d.path,
-        getColor: {tema['glow_color']}, 
-        getWidth: 18,
-        widthUnits: 'pixels',
-        jointRounded: true,
-        capRounded: true,
-      }}),
-
-      // 2. Rota - Núcleo
-      new PathLayer({{
-        id: 'route-core',
-        data: PATH_DATA,
-        getPath: d => d.path,
-        getColor: {tema['core_color']}, 
-        getWidth: 4,
-        widthUnits: 'pixels',
-        jointRounded: true,
-        capRounded: true,
-      }}),
-
-      // 3. Marcadores de Origem e Destino
-      new ScatterplotLayer({{
-        id: 'markers',
-        data: [
-          {{ position: COORDINATES[0], color: {tema['orig_color']} }},
-          {{ position: COORDINATES[COORDINATES.length - 1], color: {tema['dest_color']} }}
-        ],
-        getPosition: d => d.position,
-        getFillColor: d => d.color,
-        getRadius: 8,
-        radiusUnits: 'pixels',
-        stroked: true,
-        getLineColor: {tema['stroke_color']}, 
-        getLineWidth: 2.5,
-        lineWidthUnits: 'pixels',
-      }}),
-
-      // 4. Etiquetas de Texto Limpas
-      new TextLayer({{
-        id: 'text-labels',
-        data: [
-          {{ position: COORDINATES[0], text: 'ORIGEM', offset: [0, -22] }},
-          {{ position: COORDINATES[COORDINATES.length - 1], text: 'DESTINO', offset: [0, -22] }}
-        ],
-        getPosition: d => d.position,
-        getText: d => d.text,
-        getSize: 12,
-        getColor: {tema['text_color']},
-        getPixelOffset: d => d.offset,
-        fontFamily: 'system-ui, sans-serif',
-        fontWeight: 'bold',
-        background: true,
-        getBackgroundColor: {tema['text_bg']},
-        backgroundPadding: [8, 4],
-        cornerRadius: 4
-      }})
-    ]
+    layers: []
   }});
-
   map.addControl(deckOverlay);
+
+  // LOOP DE RENDERIZAÇÃO ANIMADA
+  let currentTime = 0;
+  function animate() {{
+      currentTime = (currentTime + 2) % maxTime; // Velocidade da animação
+
+      deckOverlay.setProps({{
+        layers: [
+          // 1. Rota - Sombra/Glow com Gradiente
+          new PathLayer({{
+            id: 'route-glow',
+            data: segmentedPath,
+            getPath: d => d.path,
+            getColor: d => [d.color[0], d.color[1], d.color[2], 90], 
+            getWidth: 18,
+            widthUnits: 'pixels',
+            jointRounded: true,
+            capRounded: true,
+          }}),
+
+          // 2. Rota - Núcleo com Gradiente
+          new PathLayer({{
+            id: 'route-core',
+            data: segmentedPath,
+            getPath: d => d.path,
+            getColor: d => d.color, 
+            getWidth: 4,
+            widthUnits: 'pixels',
+            jointRounded: true,
+            capRounded: true,
+          }}),
+
+          // 3. Efeito animado do trajeto (TripsLayer)
+          new TripsLayer({{
+            id: 'route-pulse',
+            data: tripData,
+            getPath: d => d.path,
+            getTimestamps: d => d.timestamps,
+            getColor: [255, 255, 255, 255], // Branco brilhante
+            opacity: 0.9,
+            widthMinPixels: 5,
+            trailLength: maxTime * 0.25, // Tamanho do rastro animado
+            currentTime: currentTime,
+            capRounded: true,
+            jointRounded: true
+          }})
+        ]
+      }});
+
+      requestAnimationFrame(animate);
+  }}
+
+  // Inicia a animação
+  animate();
   map.keyboard.disable();
 }});
 </script>

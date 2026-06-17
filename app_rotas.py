@@ -59,7 +59,7 @@ API_URL = "http://137.131.134.108/alocar-aluno"
 HEADERS_API = {"x-api-key": "ChallengeUDESC"}
 
 # =============================================================================
-# FUNÇÃO DE RENDERIZAÇÃO DO MAPA (TEMA CLARO + ZONA)
+# FUNÇÃO DE RENDERIZAÇÃO DO MAPA (TEMA CLÁSSICO + POLÍGONO DE ZONA)
 # =============================================================================
 def render_mapa_clean(coordinates, lat_center, lon_center, label_escola, coords_zona):
     coords_json = json.dumps(coordinates)
@@ -81,14 +81,51 @@ def render_mapa_clean(coordinates, lat_center, lon_center, label_escola, coords_
     <script src="https://unpkg.com/maplibre-gl@3/dist/maplibre-gl.js"></script>
     <link href="https://unpkg.com/maplibre-gl@3/dist/maplibre-gl.css" rel="stylesheet">
     <script>
-    const {{ DeckGL, PathLayer, TripsLayer, ScatterplotLayer }} = deck;
+    const {{ DeckGL, PathLayer, TripsLayer, PolygonLayer }} = deck;
     const COORDINATES = {coords_json};
     const ZONA_COORD = {zona_json};
     
+    // Gerador de Polígono de Zoneamento (Cria uma área octogonal ao redor do centroide)
+    function gerarPoligonoZona(center, radiusDeg) {{
+        const polygon = [];
+        for (let i = 0; i < 8; i++) {{
+            const angle = (i * Math.PI) / 4 + 0.3; // +0.3 para rotacionar e parecer mais orgânico
+            polygon.push([
+                center[0] + Math.cos(angle) * radiusDeg,
+                center[1] + Math.sin(angle) * radiusDeg * 0.9 // Ajuste para a curvatura da terra
+            ]);
+        }}
+        return polygon;
+    }}
+    const zonaPoligono = gerarPoligonoZona(ZONA_COORD, 0.015); // Raio aproximado de 1.5km
+    
+    // Configuração do mapa base Clássico e Amigável (OpenStreetMap Raster)
+    const mapStyle = {{
+        version: 8,
+        sources: {{
+            'osm-tiles': {{
+                type: 'raster',
+                tiles: [
+                    'https://a.tile.openstreetmap.org/{{z}}/{{x}}/{{y}}.png',
+                    'https://b.tile.openstreetmap.org/{{z}}/{{x}}/{{y}}.png',
+                    'https://c.tile.openstreetmap.org/{{z}}/{{x}}/{{y}}.png'
+                ],
+                tileSize: 256,
+                attribution: '© OpenStreetMap'
+            }}
+        }},
+        layers: [{{
+            id: 'osm-tiles-layer',
+            type: 'raster',
+            source: 'osm-tiles',
+            minzoom: 0,
+            maxzoom: 19
+        }}]
+    }};
+
     const map = new maplibregl.Map({{
       container: 'map',
-      // NOVO TEMA: Carto Voyager (Visual tradicional de ruas, parques e água)
-      style: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
+      style: mapStyle, // Aplicando o mapa clássico
       center: [{lon_center}, {lat_center}],
       zoom: 13, pitch: 45, bearing: 15
     }});
@@ -133,16 +170,18 @@ def render_mapa_clean(coordinates, lat_center, lon_center, label_escola, coords_
           currentTime = (currentTime + 2) % maxTime;
           deckOverlay.setProps({{
             layers: [
-              // DEMARCAÇÃO DA ZONA ESCOLAR (Círculo Transparente)
-              new ScatterplotLayer({{
-                id: 'zone-area',
-                data: [{{position: ZONA_COORD, radius: 1500}}], // Raio de 1.5km ao redor do centroide
-                getPosition: d => d.position,
-                getRadius: d => d.radius,
-                getFillColor: [56, 90, 255, 15], // Azul super transparente
-                getLineColor: [56, 90, 255, 100], // Borda do círculo
-                lineWidthMinPixels: 2,
+              // NOVA DEMARCAÇÃO: Polígono simulando o limite do Bairro/Zona
+              new PolygonLayer({{
+                id: 'zone-polygon',
+                data: [{{contour: zonaPoligono}}],
+                getPolygon: d => d.contour,
+                getFillColor: [56, 90, 255, 35], // Azul transparente para o interior
+                getLineColor: [56, 90, 255, 200], // Borda forte do polígono
+                getLineWidth: 4,
+                lineWidthUnits: 'pixels',
                 stroked: true,
+                filled: true,
+                wireframe: true,
                 pickable: false
               }}),
               
@@ -166,7 +205,6 @@ def render_mapa_clean(coordinates, lat_center, lon_center, label_escola, coords_
     </html>
     """
     components.html(html, height=600, scrolling=False)
-
 
 # =============================================================================
 # TELA 1: FORMULÁRIO DE ENTRADA

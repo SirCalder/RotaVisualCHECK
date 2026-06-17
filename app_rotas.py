@@ -10,19 +10,19 @@ import time
 st.set_page_config(page_title="SysPlan | Smart Route", page_icon="🧭", layout="wide", initial_sidebar_state="collapsed")
 
 # =============================================================================
-# CSS INJETADO: FLAT DESIGN & NEO-MINIMALISMO (Zero Glassmorphism)
+# CSS INJETADO: PALETA TECH (Azul Elétrico + Ciano + Coral)
 # =============================================================================
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
-    /* Reset global e Tipografia */
     * {
         font-family: 'Plus Jakarta Sans', sans-serif !important;
     }
     
+    /* Fundo Gelo (Slate 50) - Deixa o azul saltar aos olhos */
     .stApp {
-        background-color: #f4f6f9; /* Cinza super claro, aspecto limpo */
+        background-color: #f8fafc; 
     }
     
     #MainMenu, header, footer {visibility: hidden;}
@@ -32,7 +32,7 @@ st.markdown("""
         max-width: 1200px;
     }
 
-    /* O Botão Principal - Sólido e Dinâmico */
+    /* O Botão Principal - Azul Elétrico com Sombra Marinho */
     .stButton>button {
         background-color: #385aff;
         color: #ffffff;
@@ -43,20 +43,20 @@ st.markdown("""
         border: none;
         width: 100%;
         transition: all 0.2s ease;
-        box-shadow: 0 4px 0px #203bb5; /* Sombra sólida (Flat 3D) */
+        box-shadow: 0 4px 0px #1e3a8a; 
         margin-top: 16px;
     }
     .stButton>button:hover {
-        background-color: #4b6bff;
+        background-color: #2548e8;
         transform: translateY(2px);
-        box-shadow: 0 2px 0px #203bb5; /* Efeito de clique físico */
+        box-shadow: 0 2px 0px #1e3a8a;
         color: white;
     }
 
-    /* Campos de Entrada (Inputs limpos e arrojados) */
+    /* Campos de Entrada */
     .stTextInput>div>div>input, .stSelectbox>div>div>div {
         background-color: #ffffff;
-        border: 2px solid #e2e8f0;
+        border: 2px solid #cbd5e1;
         border-radius: 12px;
         color: #0f172a;
         font-weight: 500;
@@ -65,13 +65,13 @@ st.markdown("""
     }
     .stTextInput>div>div>input:focus, .stSelectbox>div>div>div:focus {
         border-color: #385aff;
-        box-shadow: 0 0 0 4px rgba(56, 90, 255, 0.15); /* Halo sólido, não embaçado */
+        box-shadow: 0 0 0 4px rgba(56, 90, 255, 0.15); 
     }
     
     /* Títulos dos campos */
     .stTextInput label, .stSelectbox label {
         font-weight: 700;
-        color: #334155;
+        color: #1e293b;
         font-size: 14px;
         margin-bottom: 6px;
         text-transform: uppercase;
@@ -83,11 +83,11 @@ st.markdown("""
         background-color: #ffffff;
         border-radius: 24px;
         padding: 40px;
-        box-shadow: 0 20px 40px -15px rgba(0,0,0,0.05); /* Sombra suave para destacar do fundo */
-        border: 1px solid #f1f5f9;
+        box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.08); 
+        border: 1px solid #e2e8f0;
     }
 
-    /* Painel Azul Criativo (Esquerda) - Padrões Geométricos Sólidos */
+    /* Painel Azul Criativo (Esquerda) */
     .left-panel {
         background-color: #385aff;
         border-radius: 24px;
@@ -98,7 +98,7 @@ st.markdown("""
         justify-content: center;
         position: relative;
         overflow: hidden;
-        box-shadow: 0 20px 40px -15px rgba(56, 90, 255, 0.3);
+        box-shadow: 0 20px 40px -15px rgba(56, 90, 255, 0.4);
     }
     .left-panel h1 {
         color: #ffffff;
@@ -116,24 +116,24 @@ st.markdown("""
         z-index: 2;
     }
     
-    /* Decorações Geométricas Sólidas (Substitui o blur por flat design) */
+    /* Decorações Geométricas - A Nova Paleta Harmonizada */
     .geo-shape-1 {
-        position: absolute; top: -20px; right: -40px;
-        width: 150px; height: 150px;
-        background-color: #2b46cc;
+        position: absolute; top: -30px; right: -30px;
+        width: 180px; height: 180px;
+        background-color: #00d4ff; /* Ciano Neon - Combina perfeitamente com Azul */
         border-radius: 50%; z-index: 1;
     }
     .geo-shape-2 {
-        position: absolute; bottom: 40px; left: -30px;
-        width: 100px; height: 100px;
-        background-color: #5c7aff;
-        border-radius: 24px;
-        transform: rotate(15deg); z-index: 1;
+        position: absolute; bottom: 30px; left: -30px;
+        width: 120px; height: 120px;
+        background-color: #0f172a; /* Azul Marinho Super Escuro - Dá profundidade */
+        border-radius: 30px;
+        transform: rotate(25deg); z-index: 1;
     }
     .geo-shape-3 {
-        position: absolute; top: 40%; right: 20%;
-        width: 40px; height: 40px;
-        background-color: #ffca28; /* Acento criativo amarelo */
+        position: absolute; top: 40%; right: 25%;
+        width: 30px; height: 30px;
+        background-color: #ff6b35; /* Laranja Coral - Contraste agressivo e moderno */
         border-radius: 50%; z-index: 1;
     }
     
@@ -164,7 +164,6 @@ def ir_para_tela_2():
 def voltar_tela_1():
     st.session_state.tela_atual = 1
 
-# O seu IP e Senha do Servidor 2
 API_URL = "http://137.131.134.108/alocar-aluno"
 HEADERS_API = {"x-api-key": "ChallengeUDESC"}
 
@@ -179,8 +178,8 @@ def render_mapa_clean(coordinates, lat_center, lon_center, label_escola):
     <head>
     <style>
       * {{ margin:0; padding:0; box-sizing:border-box; }}
-      body {{ background: #f4f6f9; font-family: 'Plus Jakarta Sans', sans-serif; overflow:hidden; }}
-      #map {{ width:100%; height:550px; position:relative; border-radius: 24px; border: 4px solid #ffffff; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1); }}
+      body {{ background: #f8fafc; font-family: 'Plus Jakarta Sans', sans-serif; overflow:hidden; }}
+      #map {{ width:100%; height:550px; position:relative; border-radius: 24px; border: 4px solid #ffffff; box-shadow: 0 10px 30px -10px rgba(15,23,42,0.1); }}
     </style>
     </head>
     <body>
@@ -205,7 +204,7 @@ def render_mapa_clean(coordinates, lat_center, lon_center, label_escola):
       for(let i = 0; i < COORDINATES.length - 1; i++) {{
           segmentedPath.push({{
               path: [COORDINATES[i], COORDINATES[i+1]],
-              color: [56, 90, 255, 255]
+              color: [56, 90, 255, 255] // Azul Elétrico
           }});
           timestamps.push(i * 10);
       }}
@@ -224,7 +223,7 @@ def render_mapa_clean(coordinates, lat_center, lon_center, label_escola):
                 font-size: 13px; 
                 font-weight: 700; 
                 border: 3px solid rgb(${{color}}); 
-                box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+                box-shadow: 0 8px 16px rgba(15,23,42,0.12);
                 display: flex;
                 align-items: center;
                 gap: 6px;
@@ -234,9 +233,10 @@ def render_mapa_clean(coordinates, lat_center, lon_center, label_escola):
           return el;
       }}
 
-      new maplibregl.Marker({{element: createMarker('56, 90, 255', 'Residência', '🏠'), anchor: 'bottom'}})
+      // Marcadores agora respeitam a nova paleta: Azul para casa, Coral para escola
+      new maplibregl.Marker({{element: createMarker('56, 90, 255', 'Residência', '📍'), anchor: 'bottom'}})
           .setLngLat(COORDINATES[0]).addTo(map);
-      new maplibregl.Marker({{element: createMarker('255, 202, 40', '{label_escola}', '🏫'), anchor: 'bottom'}})
+      new maplibregl.Marker({{element: createMarker('255, 107, 53', '{label_escola}', '🏫'), anchor: 'bottom'}})
           .setLngLat(COORDINATES[COORDINATES.length - 1]).addTo(map);
 
       const deckOverlay = new deck.MapboxOverlay({{ interleaved: false, layers: [] }});
@@ -254,7 +254,8 @@ def render_mapa_clean(coordinates, lat_center, lon_center, label_escola):
               }}),
               new TripsLayer({{
                 id: 'route-pulse', data: tripData, getPath: d => d.path, getTimestamps: d => d.timestamps,
-                getColor: [255, 255, 255, 255], opacity: 1, widthMinPixels: 4, trailLength: maxTime * 0.4, currentTime: currentTime,
+                getColor: [0, 212, 255, 255], // Pulso agora é Ciano Neon!
+                opacity: 1, widthMinPixels: 4, trailLength: maxTime * 0.4, currentTime: currentTime,
                 capRounded: true, jointRounded: true
               }})
             ]
@@ -271,13 +272,13 @@ def render_mapa_clean(coordinates, lat_center, lon_center, label_escola):
 
 
 # =============================================================================
-# TELA 1: FORMULÁRIO DE ENTRADA (Criativo e Sólido)
+# TELA 1: FORMULÁRIO DE ENTRADA
 # =============================================================================
 if st.session_state.tela_atual == 1:
     
     col_left, col_spacer, col_right = st.columns([1.1, 0.1, 1.2])
 
-    # --- LADO ESQUERDO (Painel Criativo Sólido) ---
+    # --- LADO ESQUERDO ---
     with col_left:
         st.markdown("""
         <div class="left-panel">
@@ -289,7 +290,7 @@ if st.session_state.tela_atual == 1:
         </div>
         """, unsafe_allow_html=True)
 
-    # --- LADO DIREITO (Formulário Flat) ---
+    # --- LADO DIREITO ---
     with col_right:
         st.markdown("""
         <div style="margin-bottom: 24px;">
@@ -298,7 +299,6 @@ if st.session_state.tela_atual == 1:
         </div>
         """, unsafe_allow_html=True)
         
-        # O formulário com visual SaaS
         st.markdown('<div class="form-card">', unsafe_allow_html=True)
         
         nome_crianca = st.text_input("Identificação do Aluno", placeholder="Ex: Guilherme Cardoso")
@@ -310,7 +310,6 @@ if st.session_state.tela_atual == 1:
         with c_turno:
             turno = st.selectbox("Turno Letivo", options=[("Matutino", 1), ("Vespertino", 2), ("Noturno", 3)], format_func=lambda x: x[0])
             
-        # Botão Flat 3D
         if st.button("Executar Simulação Matemática"):
             if nome_crianca == "" or endereco == "":
                 st.error("⚠️ É obrigatório preencher a Identificação e o Logradouro.")
@@ -348,11 +347,10 @@ if st.session_state.tela_atual == 1:
         st.markdown('</div>', unsafe_allow_html=True)
 
 # =============================================================================
-# TELA 2: PROCESSAMENTO E RESULTADO (Dash limpo)
+# TELA 2: PROCESSAMENTO E RESULTADO
 # =============================================================================
 elif st.session_state.tela_atual == 2:
     
-    # Botão de voltar discreto no topo
     st.button("← Nova Simulação", on_click=voltar_tela_1)
 
     with st.spinner("Conectando ao OSRM e renderizando topologia..."):
@@ -362,14 +360,13 @@ elif st.session_state.tela_atual == 2:
             if response.status_code == 200:
                 dados = response.json()
                 
-                # Banner de Sucesso Sólido
+                # Banner de Sucesso com Azul Elétrico e Ciano
                 st.markdown(f"""
-                <div style="background-color: #dcfce7; border: 2px solid #22c55e; border-radius: 12px; padding: 16px 24px; margin-bottom: 24px; color: #166534; font-weight: 600; display: flex; align-items: center; gap: 12px;">
-                    <span style="font-size: 20px;">✅</span> Alocação Ótima: O aluno {dados['aluno_id']} foi direcionado matematicamente.
+                <div style="background: linear-gradient(90deg, #385aff 0%, #00d4ff 100%); border-radius: 12px; padding: 16px 24px; margin-bottom: 24px; color: #ffffff; font-weight: 700; display: flex; align-items: center; gap: 12px; box-shadow: 0 10px 20px -5px rgba(56,90,255,0.3);">
+                    <span style="font-size: 20px;">✓</span> Alocação Ótima: O aluno {dados['aluno_id']} foi direcionado com sucesso.
                 </div>
                 """, unsafe_allow_html=True)
                 
-                # Container Branco para as Métricas
                 st.markdown('<div class="form-card" style="padding: 24px; margin-bottom: 24px;">', unsafe_allow_html=True)
                 c1, c2, c3, c4 = st.columns(4)
                 c1.metric("Setor Demográfico", f"ZONA {dados['zona_identificada']}")
@@ -378,7 +375,6 @@ elif st.session_state.tela_atual == 2:
                 c4.metric("Deslocamento", f"{dados['tempo_min']} min")
                 st.markdown('</div>', unsafe_allow_html=True)
                 
-                # Renderiza o mapa Deck.gl
                 coords = dados['rota_geojson']['coordinates']
                 lons = [c[0] for c in coords]
                 lats = [c[1] for c in coords]

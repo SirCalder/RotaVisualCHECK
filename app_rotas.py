@@ -432,53 +432,53 @@ if st.session_state.tela_atual == 1:
     with col_left:
         st.markdown("""
 <div class="left-panel">
-    <div class="geo-shape-1"></div>
-    <div class="geo-shape-2"></div>
-    <div class="geo-shape-3"></div>
-    <div class="geo-shape-4"></div>
-    <div class="geo-shape-5"></div>
-    <div class="badge-top">🚀 Motor de Otimização Ativado</div>
-    <h1>Logística<br>Inteligente.</h1>
-    <p>Otimização matemática em tempo real para a gestão educacional. Insira os dados para calcular a rota mais eficiente utilizando o motor CBC/PuLP.</p>
-    
-    <div class="feature-list">
-        <div class="feature-item">
-            <span class="icon">📍</span>
-            <div>
-                <strong>Geocodificação Precisa</strong>
-                <span>Mapeamento exato da residência via Nominatim</span>
-            </div>
-        </div>
-        <div class="feature-item">
-            <span class="icon">⚡</span>
-            <div>
-                <strong>Processamento Rápido</strong>
-                <span>Algoritmos de roteamento de alto desempenho</span>
-            </div>
-        </div>
-        <div class="feature-item">
-            <span class="icon">🛡️</span>
-            <div>
-                <strong>Alocação Segura</strong>
-                <span>Respeitando a capacidade máxima das zonas</span>
-            </div>
-        </div>
-    </div>
-    
-    <div class="stats-box">
-        <div class="stat">
-            <h4>+10k</h4>
-            <span>Rotas</span>
-        </div>
-        <div class="stat">
-            <h4>99%</h4>
-            <span>Precisão</span>
-        </div>
-        <div class="stat">
-            <h4>&lt;1s</h4>
-            <span>Cálculo</span>
-        </div>
-    </div>
+<div class="geo-shape-1"></div>
+<div class="geo-shape-2"></div>
+<div class="geo-shape-3"></div>
+<div class="geo-shape-4"></div>
+<div class="geo-shape-5"></div>
+<div class="badge-top">🚀 Motor de Otimização Ativado</div>
+<h1>Logística<br>Inteligente.</h1>
+<p>Otimização matemática em tempo real para a gestão educacional. Insira os dados para calcular a rota mais eficiente utilizando o motor CBC/PuLP.</p>
+
+<div class="feature-list">
+<div class="feature-item">
+<span class="icon">📍</span>
+<div>
+<strong>Geocodificação Precisa</strong>
+<span>Mapeamento exato da residência via Nominatim</span>
+</div>
+</div>
+<div class="feature-item">
+<span class="icon">⚡</span>
+<div>
+<strong>Processamento Rápido</strong>
+<span>Algoritmos de roteamento de alto desempenho</span>
+</div>
+</div>
+<div class="feature-item">
+<span class="icon">🛡️</span>
+<div>
+<strong>Alocação Segura</strong>
+<span>Respeitando a capacidade máxima das zonas</span>
+</div>
+</div>
+</div>
+
+<div class="stats-box">
+<div class="stat">
+<h4>+10k</h4>
+<span>Rotas</span>
+</div>
+<div class="stat">
+<h4>99%</h4>
+<span>Precisão</span>
+</div>
+<div class="stat">
+<h4>&lt;1s</h4>
+<span>Cálculo</span>
+</div>
+</div>
 </div>
 """, unsafe_allow_html=True)
 

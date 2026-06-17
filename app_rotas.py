@@ -431,76 +431,76 @@ if st.session_state.tela_atual == 1:
 
     with col_left:
         st.markdown("""
-        <div class="left-panel">
-            <div class="geo-shape-1"></div>
-            <div class="geo-shape-2"></div>
-            <div class="geo-shape-3"></div>
-            <div class="geo-shape-4"></div>
-            <div class="geo-shape-5"></div>
-            <div class="badge-top">🚀 Motor de Otimização Ativado</div>
-            <h1>Logística<br>Inteligente.</h1>
-            <p>Otimização matemática em tempo real para a gestão educacional. Insira os dados para calcular a rota mais eficiente utilizando o motor CBC/PuLP.</p>
-            
-            <div class="feature-list">
-                <div class="feature-item">
-                    <span class="icon">📍</span>
-                    <div>
-                        <strong>Geocodificação Precisa</strong>
-                        <span>Mapeamento exato da residência via Nominatim</span>
-                    </div>
-                </div>
-                <div class="feature-item">
-                    <span class="icon">⚡</span>
-                    <div>
-                        <strong>Processamento Rápido</strong>
-                        <span>Algoritmos de roteamento de alto desempenho</span>
-                    </div>
-                </div>
-                <div class="feature-item">
-                    <span class="icon">🛡️</span>
-                    <div>
-                        <strong>Alocação Segura</strong>
-                        <span>Respeitando a capacidade máxima das zonas</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="stats-box">
-                <div class="stat">
-                    <h4>+10k</h4>
-                    <span>Rotas</span>
-                </div>
-                <div class="stat">
-                    <h4>99%</h4>
-                    <span>Precisão</span>
-                </div>
-                <div class="stat">
-                    <h4>&lt;1s</h4>
-                    <span>Cálculo</span>
-                </div>
+<div class="left-panel">
+    <div class="geo-shape-1"></div>
+    <div class="geo-shape-2"></div>
+    <div class="geo-shape-3"></div>
+    <div class="geo-shape-4"></div>
+    <div class="geo-shape-5"></div>
+    <div class="badge-top">🚀 Motor de Otimização Ativado</div>
+    <h1>Logística<br>Inteligente.</h1>
+    <p>Otimização matemática em tempo real para a gestão educacional. Insira os dados para calcular a rota mais eficiente utilizando o motor CBC/PuLP.</p>
+    
+    <div class="feature-list">
+        <div class="feature-item">
+            <span class="icon">📍</span>
+            <div>
+                <strong>Geocodificação Precisa</strong>
+                <span>Mapeamento exato da residência via Nominatim</span>
             </div>
         </div>
-        """, unsafe_allow_html=True)
+        <div class="feature-item">
+            <span class="icon">⚡</span>
+            <div>
+                <strong>Processamento Rápido</strong>
+                <span>Algoritmos de roteamento de alto desempenho</span>
+            </div>
+        </div>
+        <div class="feature-item">
+            <span class="icon">🛡️</span>
+            <div>
+                <strong>Alocação Segura</strong>
+                <span>Respeitando a capacidade máxima das zonas</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="stats-box">
+        <div class="stat">
+            <h4>+10k</h4>
+            <span>Rotas</span>
+        </div>
+        <div class="stat">
+            <h4>99%</h4>
+            <span>Precisão</span>
+        </div>
+        <div class="stat">
+            <h4>&lt;1s</h4>
+            <span>Cálculo</span>
+        </div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
     with col_right:
         st.markdown("""
-        <div style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: flex-end;">
-            <div>
-                <div style="display: inline-block; background: #e0e7ff; color: #385aff; padding: 6px 14px; border-radius: 12px; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">Módulo de Entrada</div>
-                <h2 style="font-size: 32px; font-weight: 800; color: #0f172a; margin-bottom: 8px; line-height: 1.2;">Nova Matrícula</h2>
-                <p style="color: #64748b; font-size: 15px; margin-bottom: 0;">Preencha as informações para acionar o otimizador logístico.</p>
-            </div>
-            <div style="width: 56px; height: 56px; background: #f1f5f9; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);">📝</div>
-        </div>
-        """, unsafe_allow_html=True)
+<div style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: flex-end;">
+    <div>
+        <div style="display: inline-block; background: #e0e7ff; color: #385aff; padding: 6px 14px; border-radius: 12px; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">Módulo de Entrada</div>
+        <h2 style="font-size: 32px; font-weight: 800; color: #0f172a; margin-bottom: 8px; line-height: 1.2;">Nova Matrícula</h2>
+        <p style="color: #64748b; font-size: 15px; margin-bottom: 0;">Preencha as informações para acionar o otimizador logístico.</p>
+    </div>
+    <div style="width: 56px; height: 56px; background: #f1f5f9; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);">📝</div>
+</div>
+""", unsafe_allow_html=True)
         
         st.markdown('<div class="form-card">', unsafe_allow_html=True)
         
         st.markdown("""
-        <div style="background: rgba(56, 90, 255, 0.05); border-left: 4px solid #385aff; padding: 16px; border-radius: 0 12px 12px 0; margin-bottom: 24px;">
-            <p style="color: #1e3a8a; font-size: 14px; margin: 0; font-weight: 600;">⚠️ Os dados inseridos serão validados pela geocodificação em tempo real para encontrar a coordenada exata da residência.</p>
-        </div>
-        """, unsafe_allow_html=True)
+<div style="background: rgba(56, 90, 255, 0.05); border-left: 4px solid #385aff; padding: 16px; border-radius: 0 12px 12px 0; margin-bottom: 24px;">
+    <p style="color: #1e3a8a; font-size: 14px; margin: 0; font-weight: 600;">⚠️ Os dados inseridos serão validados pela geocodificação em tempo real para encontrar a coordenada exata da residência.</p>
+</div>
+""", unsafe_allow_html=True)
         
         nome_crianca = st.text_input("👤 Identificação do Aluno", placeholder="Ex: Guilherme Cardoso")
         endereco = st.text_input("📍 Logradouro (Rua, Número, Bairro)", placeholder="Ex: Rua XV de Novembro, 100")

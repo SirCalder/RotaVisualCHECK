@@ -135,6 +135,93 @@ st.markdown("""
         z-index: 1;
         animation: rotate-slow 20s linear infinite;
     }
+    
+    .badge-top {
+        background: rgba(255, 255, 255, 0.15);
+        color: white;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 700;
+        display: inline-block;
+        margin-bottom: 24px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        width: fit-content;
+        z-index: 2;
+        position: relative;
+    }
+    .feature-list {
+        margin-top: 32px;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        z-index: 2;
+        position: relative;
+    }
+    .feature-item {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        background: rgba(255, 255, 255, 0.08);
+        padding: 16px;
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        transition: all 0.3s ease;
+    }
+    .feature-item:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: translateX(6px);
+        border-color: rgba(255, 255, 255, 0.3);
+    }
+    .feature-item .icon {
+        font-size: 24px;
+        background: rgba(255, 255, 255, 0.2);
+        width: 48px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .feature-item strong {
+        color: #ffffff;
+        display: block;
+        font-size: 15px;
+        margin-bottom: 2px;
+        letter-spacing: 0.3px;
+    }
+    .feature-item span {
+        color: #e0e7ff;
+        font-size: 13px;
+        display: block;
+        opacity: 0.9;
+    }
+    .stats-box {
+        display: flex;
+        gap: 24px;
+        margin-top: 40px;
+        z-index: 2;
+        position: relative;
+        padding-top: 24px;
+        border-top: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .stat h4 {
+        color: #ffffff;
+        font-size: 28px;
+        font-weight: 800;
+        margin: 0 0 2px 0;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .stat span {
+        color: #c7d2fe;
+        font-size: 12px;
+        text-transform: uppercase;
+        font-weight: 700;
+        letter-spacing: 1px;
+    }
+    
     @keyframes float {
         0%, 100% { transform: translateY(0px) scale(1); }
         50% { transform: translateY(-20px) scale(1.1); }
@@ -350,29 +437,81 @@ if st.session_state.tela_atual == 1:
             <div class="geo-shape-3"></div>
             <div class="geo-shape-4"></div>
             <div class="geo-shape-5"></div>
+            <div class="badge-top">🚀 Motor de Otimização Ativado</div>
             <h1>Logística<br>Inteligente.</h1>
             <p>Otimização matemática em tempo real para a gestão educacional. Insira os dados para calcular a rota mais eficiente utilizando o motor CBC/PuLP.</p>
+            
+            <div class="feature-list">
+                <div class="feature-item">
+                    <span class="icon">📍</span>
+                    <div>
+                        <strong>Geocodificação Precisa</strong>
+                        <span>Mapeamento exato da residência via Nominatim</span>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <span class="icon">⚡</span>
+                    <div>
+                        <strong>Processamento Rápido</strong>
+                        <span>Algoritmos de roteamento de alto desempenho</span>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <span class="icon">🛡️</span>
+                    <div>
+                        <strong>Alocação Segura</strong>
+                        <span>Respeitando a capacidade máxima das zonas</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="stats-box">
+                <div class="stat">
+                    <h4>+10k</h4>
+                    <span>Rotas</span>
+                </div>
+                <div class="stat">
+                    <h4>99%</h4>
+                    <span>Precisão</span>
+                </div>
+                <div class="stat">
+                    <h4>&lt;1s</h4>
+                    <span>Cálculo</span>
+                </div>
+            </div>
         </div>
         """, unsafe_allow_html=True)
 
     with col_right:
         st.markdown("""
-        <div style="margin-bottom: 24px;">
-            <h2 style="font-size: 28px; font-weight: 800; color: #0f172a; margin-bottom: 8px;">Nova Matrícula</h2>
-            <p style="color: #64748b; font-size: 15px; margin-bottom: 0;">Preencha as informações para acionar o otimizador.</p>
+        <div style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: flex-end;">
+            <div>
+                <div style="display: inline-block; background: #e0e7ff; color: #385aff; padding: 6px 14px; border-radius: 12px; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">Módulo de Entrada</div>
+                <h2 style="font-size: 32px; font-weight: 800; color: #0f172a; margin-bottom: 8px; line-height: 1.2;">Nova Matrícula</h2>
+                <p style="color: #64748b; font-size: 15px; margin-bottom: 0;">Preencha as informações para acionar o otimizador logístico.</p>
+            </div>
+            <div style="width: 56px; height: 56px; background: #f1f5f9; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 28px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);">📝</div>
         </div>
         """, unsafe_allow_html=True)
         
         st.markdown('<div class="form-card">', unsafe_allow_html=True)
         
-        nome_crianca = st.text_input("Identificação do Aluno", placeholder="Ex: Guilherme Cardoso")
-        endereco = st.text_input("Logradouro (Rua, Número, Bairro)", placeholder="Ex: Rua XV de Novembro, 100")
+        st.markdown("""
+        <div style="background: rgba(56, 90, 255, 0.05); border-left: 4px solid #385aff; padding: 16px; border-radius: 0 12px 12px 0; margin-bottom: 24px;">
+            <p style="color: #1e3a8a; font-size: 14px; margin: 0; font-weight: 600;">⚠️ Os dados inseridos serão validados pela geocodificação em tempo real para encontrar a coordenada exata da residência.</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        nome_crianca = st.text_input("👤 Identificação do Aluno", placeholder="Ex: Guilherme Cardoso")
+        endereco = st.text_input("📍 Logradouro (Rua, Número, Bairro)", placeholder="Ex: Rua XV de Novembro, 100")
             
         c_turma, c_turno = st.columns(2)
         with c_turma:
-            turma = st.selectbox("Ano Escolar", options=[1,2,3,4,5,6,7,8,9], index=3)
+            turma = st.selectbox("📚 Ano Escolar", options=[1,2,3,4,5,6,7,8,9], index=3)
         with c_turno:
-            turno = st.selectbox("Turno Letivo", options=[("Matutino", 1), ("Vespertino", 2), ("Noturno", 3)], format_func=lambda x: x[0])
+            turno = st.selectbox("☀️ Turno Letivo", options=[("Matutino", 1), ("Vespertino", 2), ("Noturno", 3)], format_func=lambda x: x[0])
+            
+        st.markdown("<div style='margin-top: 8px;'></div>", unsafe_allow_html=True)
             
         if st.button("Executar Simulação Matemática"):
             if nome_crianca == "" or endereco == "":

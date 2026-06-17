@@ -10,145 +10,36 @@ import time
 st.set_page_config(page_title="SysPlan | Smart Route", page_icon="🧭", layout="wide", initial_sidebar_state="collapsed")
 
 # =============================================================================
-# CSS INJETADO: PALETA TECH (Azul Elétrico + Ciano + Coral)
+# CSS INJETADO
 # =============================================================================
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-
-    * {
-        font-family: 'Plus Jakarta Sans', sans-serif !important;
-    }
-    
-    /* Fundo Gelo (Slate 50) - Deixa o azul saltar aos olhos */
-    .stApp {
-        background-color: #f8fafc; 
-    }
-    
+    * { font-family: 'Plus Jakarta Sans', sans-serif !important; }
+    .stApp { background-color: #f8fafc; }
     #MainMenu, header, footer {visibility: hidden;}
-    
-    .block-container {
-        padding-top: 2rem !important;
-        max-width: 1200px;
-    }
-
-    /* O Botão Principal - Azul Elétrico com Sombra Marinho */
+    .block-container { padding-top: 2rem !important; max-width: 1200px; }
     .stButton>button {
-        background-color: #385aff;
-        color: #ffffff;
-        border-radius: 12px;
-        padding: 16px 24px;
-        font-weight: 700;
-        font-size: 16px;
-        border: none;
-        width: 100%;
-        transition: all 0.2s ease;
-        box-shadow: 0 4px 0px #1e3a8a; 
-        margin-top: 16px;
+        background-color: #385aff; color: #ffffff; border-radius: 12px; padding: 16px 24px;
+        font-weight: 700; font-size: 16px; border: none; width: 100%; transition: all 0.2s ease;
+        box-shadow: 0 4px 0px #1e3a8a; margin-top: 16px;
     }
-    .stButton>button:hover {
-        background-color: #2548e8;
-        transform: translateY(2px);
-        box-shadow: 0 2px 0px #1e3a8a;
-        color: white;
-    }
-
-    /* Campos de Entrada */
+    .stButton>button:hover { background-color: #2548e8; transform: translateY(2px); box-shadow: 0 2px 0px #1e3a8a; color: white; }
     .stTextInput>div>div>input, .stSelectbox>div>div>div {
-        background-color: #ffffff;
-        border: 2px solid #cbd5e1;
-        border-radius: 12px;
-        color: #0f172a;
-        font-weight: 500;
-        padding: 12px 16px;
-        transition: all 0.3s ease;
+        background-color: #ffffff; border: 2px solid #cbd5e1; border-radius: 12px; color: #0f172a;
+        font-weight: 500; padding: 12px 16px; transition: all 0.3s ease;
     }
-    .stTextInput>div>div>input:focus, .stSelectbox>div>div>div:focus {
-        border-color: #385aff;
-        box-shadow: 0 0 0 4px rgba(56, 90, 255, 0.15); 
-    }
-    
-    /* Títulos dos campos */
-    .stTextInput label, .stSelectbox label {
-        font-weight: 700;
-        color: #1e293b;
-        font-size: 14px;
-        margin-bottom: 6px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    /* Cartão Branco de Formulário */
-    .form-card {
-        background-color: #ffffff;
-        border-radius: 24px;
-        padding: 40px;
-        box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.08); 
-        border: 1px solid #e2e8f0;
-    }
-
-    /* Painel Azul Criativo (Esquerda) */
-    .left-panel {
-        background-color: #385aff;
-        border-radius: 24px;
-        padding: 48px;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        position: relative;
-        overflow: hidden;
-        box-shadow: 0 20px 40px -15px rgba(56, 90, 255, 0.4);
-    }
-    .left-panel h1 {
-        color: #ffffff;
-        font-size: 52px;
-        font-weight: 800;
-        line-height: 1.1;
-        margin-bottom: 24px;
-        z-index: 2;
-    }
-    .left-panel p {
-        color: #e0e7ff;
-        font-size: 18px;
-        font-weight: 400;
-        line-height: 1.6;
-        z-index: 2;
-    }
-    
-    /* Decorações Geométricas - A Nova Paleta Harmonizada */
-    .geo-shape-1 {
-        position: absolute; top: -30px; right: -30px;
-        width: 180px; height: 180px;
-        background-color: #00d4ff; /* Ciano Neon - Combina perfeitamente com Azul */
-        border-radius: 50%; z-index: 1;
-    }
-    .geo-shape-2 {
-        position: absolute; bottom: 30px; left: -30px;
-        width: 120px; height: 120px;
-        background-color: #0f172a; /* Azul Marinho Super Escuro - Dá profundidade */
-        border-radius: 30px;
-        transform: rotate(25deg); z-index: 1;
-    }
-    .geo-shape-3 {
-        position: absolute; top: 40%; right: 25%;
-        width: 30px; height: 30px;
-        background-color: #ff6b35; /* Laranja Coral - Contraste agressivo e moderno */
-        border-radius: 50%; z-index: 1;
-    }
-    
-    /* Customização das Métricas do Streamlit */
-    [data-testid="stMetricValue"] {
-        font-weight: 800;
-        font-size: 28px;
-        color: #385aff;
-    }
-    [data-testid="stMetricLabel"] {
-        font-weight: 600;
-        font-size: 14px;
-        color: #64748b;
-        text-transform: uppercase;
-    }
+    .stTextInput>div>div>input:focus, .stSelectbox>div>div>div:focus { border-color: #385aff; box-shadow: 0 0 0 4px rgba(56, 90, 255, 0.15); }
+    .stTextInput label, .stSelectbox label { font-weight: 700; color: #1e293b; font-size: 14px; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .form-card { background-color: #ffffff; border-radius: 24px; padding: 40px; box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.08); border: 1px solid #e2e8f0; }
+    .left-panel { background-color: #385aff; border-radius: 24px; padding: 48px; height: 100%; display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; box-shadow: 0 20px 40px -15px rgba(56, 90, 255, 0.4); }
+    .left-panel h1 { color: #ffffff; font-size: 52px; font-weight: 800; line-height: 1.1; margin-bottom: 24px; z-index: 2; }
+    .left-panel p { color: #e0e7ff; font-size: 18px; font-weight: 400; line-height: 1.6; z-index: 2; }
+    .geo-shape-1 { position: absolute; top: -30px; right: -30px; width: 180px; height: 180px; background-color: #00d4ff; border-radius: 50%; z-index: 1; }
+    .geo-shape-2 { position: absolute; bottom: 30px; left: -30px; width: 120px; height: 120px; background-color: #0f172a; border-radius: 30px; transform: rotate(25deg); z-index: 1; }
+    .geo-shape-3 { position: absolute; top: 40%; right: 25%; width: 30px; height: 30px; background-color: #ff6b35; border-radius: 50%; z-index: 1; }
+    [data-testid="stMetricValue"] { font-weight: 800; font-size: 28px; color: #385aff; }
+    [data-testid="stMetricLabel"] { font-weight: 600; font-size: 14px; color: #64748b; text-transform: uppercase; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -168,10 +59,12 @@ API_URL = "http://137.131.134.108/alocar-aluno"
 HEADERS_API = {"x-api-key": "ChallengeUDESC"}
 
 # =============================================================================
-# FUNÇÃO DE RENDERIZAÇÃO DO MAPA
+# FUNÇÃO DE RENDERIZAÇÃO DO MAPA (TEMA CLARO + ZONA)
 # =============================================================================
-def render_mapa_clean(coordinates, lat_center, lon_center, label_escola):
+def render_mapa_clean(coordinates, lat_center, lon_center, label_escola, coords_zona):
     coords_json = json.dumps(coordinates)
+    zona_json = json.dumps(coords_zona) # [lon, lat]
+    
     html = f"""
     <!DOCTYPE html>
     <html>
@@ -188,14 +81,16 @@ def render_mapa_clean(coordinates, lat_center, lon_center, label_escola):
     <script src="https://unpkg.com/maplibre-gl@3/dist/maplibre-gl.js"></script>
     <link href="https://unpkg.com/maplibre-gl@3/dist/maplibre-gl.css" rel="stylesheet">
     <script>
-    const {{ DeckGL, PathLayer, TripsLayer }} = deck;
+    const {{ DeckGL, PathLayer, TripsLayer, ScatterplotLayer }} = deck;
     const COORDINATES = {coords_json};
+    const ZONA_COORD = {zona_json};
     
     const map = new maplibregl.Map({{
       container: 'map',
-      style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
+      // NOVO TEMA: Carto Voyager (Visual tradicional de ruas, parques e água)
+      style: 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json',
       center: [{lon_center}, {lat_center}],
-      zoom: 13.5, pitch: 45, bearing: 15
+      zoom: 13, pitch: 45, bearing: 15
     }});
 
     map.on('load', () => {{
@@ -204,7 +99,7 @@ def render_mapa_clean(coordinates, lat_center, lon_center, label_escola):
       for(let i = 0; i < COORDINATES.length - 1; i++) {{
           segmentedPath.push({{
               path: [COORDINATES[i], COORDINATES[i+1]],
-              color: [56, 90, 255, 255] // Azul Elétrico
+              color: [56, 90, 255, 255]
           }});
           timestamps.push(i * 10);
       }}
@@ -216,24 +111,15 @@ def render_mapa_clean(coordinates, lat_center, lon_center, label_escola):
           const el = document.createElement('div');
           el.innerHTML = `
             <div style="
-                background: white; 
-                color: #0f172a; 
-                padding: 8px 16px; 
-                border-radius: 100px; 
-                font-size: 13px; 
-                font-weight: 700; 
-                border: 3px solid rgb(${{color}}); 
-                box-shadow: 0 8px 16px rgba(15,23,42,0.12);
-                display: flex;
-                align-items: center;
-                gap: 6px;
+                background: white; color: #0f172a; padding: 8px 16px; border-radius: 100px; 
+                font-size: 13px; font-weight: 700; border: 3px solid rgb(${{color}}); 
+                box-shadow: 0 8px 16px rgba(15,23,42,0.12); display: flex; align-items: center; gap: 6px;
             ">
                 <span style="font-size: 16px;">${{icon}}</span> ${{label}}
             </div>`;
           return el;
       }}
 
-      // Marcadores agora respeitam a nova paleta: Azul para casa, Coral para escola
       new maplibregl.Marker({{element: createMarker('56, 90, 255', 'Residência', '📍'), anchor: 'bottom'}})
           .setLngLat(COORDINATES[0]).addTo(map);
       new maplibregl.Marker({{element: createMarker('255, 107, 53', '{label_escola}', '🏫'), anchor: 'bottom'}})
@@ -247,15 +133,26 @@ def render_mapa_clean(coordinates, lat_center, lon_center, label_escola):
           currentTime = (currentTime + 2) % maxTime;
           deckOverlay.setProps({{
             layers: [
+              // DEMARCAÇÃO DA ZONA ESCOLAR (Círculo Transparente)
+              new ScatterplotLayer({{
+                id: 'zone-area',
+                data: [{{position: ZONA_COORD, radius: 1500}}], // Raio de 1.5km ao redor do centroide
+                getPosition: d => d.position,
+                getRadius: d => d.radius,
+                getFillColor: [56, 90, 255, 15], // Azul super transparente
+                getLineColor: [56, 90, 255, 100], // Borda do círculo
+                lineWidthMinPixels: 2,
+                stroked: true,
+                pickable: false
+              }}),
+              
               new PathLayer({{
                 id: 'route-core', data: segmentedPath, getPath: d => d.path,
-                getColor: d => d.color, getWidth: 8, widthUnits: 'pixels',
-                capRounded: true, jointRounded: true
+                getColor: d => d.color, getWidth: 8, widthUnits: 'pixels', capRounded: true, jointRounded: true
               }}),
               new TripsLayer({{
                 id: 'route-pulse', data: tripData, getPath: d => d.path, getTimestamps: d => d.timestamps,
-                getColor: [0, 212, 255, 255], // Pulso agora é Ciano Neon!
-                opacity: 1, widthMinPixels: 4, trailLength: maxTime * 0.4, currentTime: currentTime,
+                getColor: [0, 212, 255, 255], opacity: 1, widthMinPixels: 4, trailLength: maxTime * 0.4, currentTime: currentTime,
                 capRounded: true, jointRounded: true
               }})
             ]
@@ -278,7 +175,6 @@ if st.session_state.tela_atual == 1:
     
     col_left, col_spacer, col_right = st.columns([1.1, 0.1, 1.2])
 
-    # --- LADO ESQUERDO ---
     with col_left:
         st.markdown("""
         <div class="left-panel">
@@ -290,7 +186,6 @@ if st.session_state.tela_atual == 1:
         </div>
         """, unsafe_allow_html=True)
 
-    # --- LADO DIREITO ---
     with col_right:
         st.markdown("""
         <div style="margin-bottom: 24px;">
@@ -360,7 +255,6 @@ elif st.session_state.tela_atual == 2:
             if response.status_code == 200:
                 dados = response.json()
                 
-                # Banner de Sucesso com Azul Elétrico e Ciano
                 st.markdown(f"""
                 <div style="background: linear-gradient(90deg, #385aff 0%, #00d4ff 100%); border-radius: 12px; padding: 16px 24px; margin-bottom: 24px; color: #ffffff; font-weight: 700; display: flex; align-items: center; gap: 12px; box-shadow: 0 10px 20px -5px rgba(56,90,255,0.3);">
                     <span style="font-size: 20px;">✓</span> Alocação Ótima: O aluno {dados['aluno_id']} foi direcionado com sucesso.
@@ -375,13 +269,17 @@ elif st.session_state.tela_atual == 2:
                 c4.metric("Deslocamento", f"{dados['tempo_min']} min")
                 st.markdown('</div>', unsafe_allow_html=True)
                 
+                # Coordenadas da rota
                 coords = dados['rota_geojson']['coordinates']
                 lons = [c[0] for c in coords]
                 lats = [c[1] for c in coords]
                 lat_center = (min(lats) + max(lats)) / 2
                 lon_center = (min(lons) + max(lons)) / 2
+                
+                # Coordenadas da Zona Escolar (vindo do backend/dicionário)
+                coord_zona = [dados['coordenadas_zona'][1], dados['coordenadas_zona'][0]] # Lon, Lat para Deck.gl
 
-                render_mapa_clean(coords, lat_center, lon_center, dados['escola_alocada'].upper())
+                render_mapa_clean(coords, lat_center, lon_center, dados['escola_alocada'].upper(), coord_zona)
 
             else:
                 st.error(f"Falha de cálculo no servidor. Código: {response.status_code}")

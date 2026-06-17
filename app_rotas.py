@@ -32,12 +32,125 @@ st.markdown("""
     .stTextInput>div>div>input:focus, .stSelectbox>div>div>div:focus { border-color: #385aff; box-shadow: 0 0 0 4px rgba(56, 90, 255, 0.15); }
     .stTextInput label, .stSelectbox label { font-weight: 700; color: #1e293b; font-size: 14px; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
     .form-card { background-color: #ffffff; border-radius: 24px; padding: 40px; box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.08); border: 1px solid #e2e8f0; }
-    .left-panel { background-color: #385aff; border-radius: 24px; padding: 48px; height: 100%; display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; box-shadow: 0 20px 40px -15px rgba(56, 90, 255, 0.4); }
-    .left-panel h1 { color: #ffffff; font-size: 52px; font-weight: 800; line-height: 1.1; margin-bottom: 24px; z-index: 2; }
-    .left-panel p { color: #e0e7ff; font-size: 18px; font-weight: 400; line-height: 1.6; z-index: 2; }
-    .geo-shape-1 { position: absolute; top: -30px; right: -30px; width: 180px; height: 180px; background-color: #00d4ff; border-radius: 50%; z-index: 1; }
-    .geo-shape-2 { position: absolute; bottom: 30px; left: -30px; width: 120px; height: 120px; background-color: #0f172a; border-radius: 30px; transform: rotate(25deg); z-index: 1; }
-    .geo-shape-3 { position: absolute; top: 40%; right: 25%; width: 30px; height: 30px; background-color: #ff6b35; border-radius: 50%; z-index: 1; }
+    .left-panel {
+        background: linear-gradient(135deg, #385aff 0%, #1e3a8a 100%);
+        border-radius: 24px;
+        padding: 48px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 20px 60px -15px rgba(56, 90, 255, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .left-panel::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at 20% 50%, rgba(0, 212, 255, 0.1) 0%, transparent 50%);
+        z-index: 1;
+    }
+    .left-panel h1 {
+        color: #ffffff;
+        font-size: 52px;
+        font-weight: 800;
+        line-height: 1.1;
+        margin-bottom: 24px;
+        z-index: 2;
+        position: relative;
+        text-shadow: 0 4px 20px rgba(15, 23, 42, 0.2);
+        letter-spacing: -1px;
+    }
+    .left-panel p {
+        color: #e0e7ff;
+        font-size: 18px;
+        font-weight: 400;
+        line-height: 1.6;
+        z-index: 2;
+        position: relative;
+        margin: 0;
+    }
+    .geo-shape-1 {
+        position: absolute;
+        top: -50px;
+        right: -50px;
+        width: 250px;
+        height: 250px;
+        background: radial-gradient(circle, #00d4ff, #0ea5e9);
+        border-radius: 50%;
+        z-index: 1;
+        opacity: 0.15;
+        filter: blur(2px);
+        animation: float-slow 6s ease-in-out infinite;
+    }
+    .geo-shape-2 {
+        position: absolute;
+        bottom: 20px;
+        left: -40px;
+        width: 150px;
+        height: 150px;
+        background: linear-gradient(45deg, rgba(255, 255, 255, 0.08), rgba(15, 23, 42, 0.1));
+        border-radius: 40px;
+        transform: rotate(25deg);
+        z-index: 1;
+        animation: float-slow-reverse 7s ease-in-out infinite;
+    }
+    .geo-shape-3 {
+        position: absolute;
+        top: 35%;
+        right: 20%;
+        width: 60px;
+        height: 60px;
+        background: radial-gradient(circle, #ff6b35, #ff8c5a);
+        border-radius: 50%;
+        z-index: 1;
+        opacity: 0.2;
+        animation: float 4s ease-in-out infinite;
+    }
+    .geo-shape-4 {
+        position: absolute;
+        top: 15%;
+        left: 10%;
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, rgba(224, 231, 255, 0.3), rgba(0, 212, 255, 0.2));
+        border-radius: 8px;
+        z-index: 1;
+        animation: float-slow 8s ease-in-out infinite;
+        transform: rotate(45deg);
+    }
+    .geo-shape-5 {
+        position: absolute;
+        bottom: 25%;
+        right: 10%;
+        width: 80px;
+        height: 80px;
+        border: 2px solid rgba(255, 255, 255, 0.08);
+        border-radius: 50%;
+        z-index: 1;
+        animation: rotate-slow 20s linear infinite;
+    }
+    @keyframes float {
+        0%, 100% { transform: translateY(0px) scale(1); }
+        50% { transform: translateY(-20px) scale(1.1); }
+    }
+    @keyframes float-slow {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-15px); }
+    }
+    @keyframes float-slow-reverse {
+        0%, 100% { transform: translateY(0px) rotate(25deg); }
+        50% { transform: translateY(10px) rotate(25deg); }
+    }
+    @keyframes rotate-slow {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
     [data-testid="stMetricValue"] { font-weight: 800; font-size: 28px; color: #385aff; }
     [data-testid="stMetricLabel"] { font-weight: 600; font-size: 14px; color: #64748b; text-transform: uppercase; }
 </style>
@@ -235,6 +348,8 @@ if st.session_state.tela_atual == 1:
             <div class="geo-shape-1"></div>
             <div class="geo-shape-2"></div>
             <div class="geo-shape-3"></div>
+            <div class="geo-shape-4"></div>
+            <div class="geo-shape-5"></div>
             <h1>Logística<br>Inteligente.</h1>
             <p>Otimização matemática em tempo real para a gestão educacional. Insira os dados para calcular a rota mais eficiente utilizando o motor CBC/PuLP.</p>
         </div>

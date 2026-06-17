@@ -7,85 +7,90 @@ import time
 # =============================================================================
 # CONFIGURAÇÃO DA PÁGINA
 # =============================================================================
-st.set_page_config(page_title="SysPlan | Registration", page_icon="📍", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="SysPlan | Smart Route", page_icon="🧭", layout="wide", initial_sidebar_state="collapsed")
 
 # =============================================================================
-# CSS INJETADO (Adaptando Streamlit para o seu Design Tailwind)
+# CSS INJETADO: FLAT DESIGN & NEO-MINIMALISMO (Zero Glassmorphism)
 # =============================================================================
 st.markdown("""
 <style>
-    /* Reset do App Streamlit e cores globais */
-    .stApp {
-        background-color: #faf8ff;
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+    /* Reset global e Tipografia */
+    * {
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
     }
-    #MainMenu {visibility: hidden;}
-    header {visibility: hidden;}
-    footer {visibility: hidden;}
     
-    /* Espaçamento do topo */
+    .stApp {
+        background-color: #f4f6f9; /* Cinza super claro, aspecto limpo */
+    }
+    
+    #MainMenu, header, footer {visibility: hidden;}
+    
     .block-container {
         padding-top: 2rem !important;
-        max-width: 1280px;
+        max-width: 1200px;
     }
 
-    /* Estilo do Botão Principal (Baseado no seu Tailwind com #385aff) */
+    /* O Botão Principal - Sólido e Dinâmico */
     .stButton>button {
         background-color: #385aff;
-        color: white;
-        border-radius: 8px;
-        padding: 14px 24px;
-        font-family: 'Inter', sans-serif;
-        font-weight: 600;
+        color: #ffffff;
+        border-radius: 12px;
+        padding: 16px 24px;
+        font-weight: 700;
         font-size: 16px;
         border: none;
         width: 100%;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 6px rgba(56, 90, 255, 0.2);
+        transition: all 0.2s ease;
+        box-shadow: 0 4px 0px #203bb5; /* Sombra sólida (Flat 3D) */
+        margin-top: 16px;
     }
     .stButton>button:hover {
-        background-color: #2b46cc;
-        transform: translateY(-1px);
-        box-shadow: 0 6px 12px rgba(56, 90, 255, 0.3);
+        background-color: #4b6bff;
+        transform: translateY(2px);
+        box-shadow: 0 2px 0px #203bb5; /* Efeito de clique físico */
         color: white;
     }
 
-    /* Estilo dos Inputs (Texto e Select) */
+    /* Campos de Entrada (Inputs limpos e arrojados) */
     .stTextInput>div>div>input, .stSelectbox>div>div>div {
         background-color: #ffffff;
-        border: 2px solid #e2e1ed;
-        border-radius: 8px;
-        color: #1a1b23;
-        font-family: 'Inter', sans-serif;
-        padding: 8px 12px;
-        transition: border-color 0.2s ease;
+        border: 2px solid #e2e8f0;
+        border-radius: 12px;
+        color: #0f172a;
+        font-weight: 500;
+        padding: 12px 16px;
+        transition: all 0.3s ease;
     }
     .stTextInput>div>div>input:focus, .stSelectbox>div>div>div:focus {
         border-color: #385aff;
-        box-shadow: 0 0 0 2px rgba(56, 90, 255, 0.2);
+        box-shadow: 0 0 0 4px rgba(56, 90, 255, 0.15); /* Halo sólido, não embaçado */
     }
     
-    /* Títulos dos campos (Labels) */
+    /* Títulos dos campos */
     .stTextInput label, .stSelectbox label {
-        font-family: 'Inter', sans-serif;
-        font-weight: 600;
-        color: #1a1b23;
+        font-weight: 700;
+        color: #334155;
         font-size: 14px;
-        margin-bottom: 4px;
+        margin-bottom: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
 
-    /* O Card Branco do Formulário (Direita) */
-    .wizard-card {
+    /* Cartão Branco de Formulário */
+    .form-card {
         background-color: #ffffff;
-        border: 2px solid #e2e1ed;
-        border-radius: 12px;
-        padding: 32px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        border-radius: 24px;
+        padding: 40px;
+        box-shadow: 0 20px 40px -15px rgba(0,0,0,0.05); /* Sombra suave para destacar do fundo */
+        border: 1px solid #f1f5f9;
     }
 
-    /* Painel Azul do GovTech (Esquerda) */
+    /* Painel Azul Criativo (Esquerda) - Padrões Geométricos Sólidos */
     .left-panel {
         background-color: #385aff;
-        border-radius: 16px;
+        border-radius: 24px;
         padding: 48px;
         height: 100%;
         display: flex;
@@ -93,33 +98,56 @@ st.markdown("""
         justify-content: center;
         position: relative;
         overflow: hidden;
+        box-shadow: 0 20px 40px -15px rgba(56, 90, 255, 0.3);
     }
     .left-panel h1 {
         color: #ffffff;
-        font-family: 'Inter', sans-serif;
-        font-size: 48px;
+        font-size: 52px;
         font-weight: 800;
         line-height: 1.1;
         margin-bottom: 24px;
         z-index: 2;
     }
     .left-panel p {
-        color: rgba(255, 255, 255, 0.9);
-        font-family: 'Inter', sans-serif;
+        color: #e0e7ff;
         font-size: 18px;
+        font-weight: 400;
         line-height: 1.6;
         z-index: 2;
     }
-    /* Elemento decorativo de fundo do painel azul */
-    .bg-shape {
-        position: absolute;
-        top: -10%;
-        right: -10%;
-        width: 300px;
-        height: 300px;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 50%;
-        z-index: 1;
+    
+    /* Decorações Geométricas Sólidas (Substitui o blur por flat design) */
+    .geo-shape-1 {
+        position: absolute; top: -20px; right: -40px;
+        width: 150px; height: 150px;
+        background-color: #2b46cc;
+        border-radius: 50%; z-index: 1;
+    }
+    .geo-shape-2 {
+        position: absolute; bottom: 40px; left: -30px;
+        width: 100px; height: 100px;
+        background-color: #5c7aff;
+        border-radius: 24px;
+        transform: rotate(15deg); z-index: 1;
+    }
+    .geo-shape-3 {
+        position: absolute; top: 40%; right: 20%;
+        width: 40px; height: 40px;
+        background-color: #ffca28; /* Acento criativo amarelo */
+        border-radius: 50%; z-index: 1;
+    }
+    
+    /* Customização das Métricas do Streamlit */
+    [data-testid="stMetricValue"] {
+        font-weight: 800;
+        font-size: 28px;
+        color: #385aff;
+    }
+    [data-testid="stMetricLabel"] {
+        font-weight: 600;
+        font-size: 14px;
+        color: #64748b;
+        text-transform: uppercase;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -136,11 +164,12 @@ def ir_para_tela_2():
 def voltar_tela_1():
     st.session_state.tela_atual = 1
 
+# O seu IP e Senha do Servidor 2
 API_URL = "http://137.131.134.108/alocar-aluno"
 HEADERS_API = {"x-api-key": "ChallengeUDESC"}
 
 # =============================================================================
-# FUNÇÃO DE RENDERIZAÇÃO DO MAPA (Adequado para a cor #385aff)
+# FUNÇÃO DE RENDERIZAÇÃO DO MAPA
 # =============================================================================
 def render_mapa_clean(coordinates, lat_center, lon_center, label_escola):
     coords_json = json.dumps(coordinates)
@@ -150,8 +179,8 @@ def render_mapa_clean(coordinates, lat_center, lon_center, label_escola):
     <head>
     <style>
       * {{ margin:0; padding:0; box-sizing:border-box; }}
-      body {{ background: #faf8ff; font-family: 'Inter', sans-serif; overflow:hidden; }}
-      #map {{ width:100%; height:550px; position:relative; border-radius: 12px; border: 2px solid #e2e1ed; }}
+      body {{ background: #f4f6f9; font-family: 'Plus Jakarta Sans', sans-serif; overflow:hidden; }}
+      #map {{ width:100%; height:550px; position:relative; border-radius: 24px; border: 4px solid #ffffff; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1); }}
     </style>
     </head>
     <body>
@@ -165,7 +194,7 @@ def render_mapa_clean(coordinates, lat_center, lon_center, label_escola):
     
     const map = new maplibregl.Map({{
       container: 'map',
-      style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json', // Mapa claro
+      style: 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json',
       center: [{lon_center}, {lat_center}],
       zoom: 13.5, pitch: 45, bearing: 15
     }});
@@ -176,7 +205,7 @@ def render_mapa_clean(coordinates, lat_center, lon_center, label_escola):
       for(let i = 0; i < COORDINATES.length - 1; i++) {{
           segmentedPath.push({{
               path: [COORDINATES[i], COORDINATES[i+1]],
-              color: [56, 90, 255, 255] // A sua cor #385aff em RGB
+              color: [56, 90, 255, 255]
           }});
           timestamps.push(i * 10);
       }}
@@ -184,15 +213,30 @@ def render_mapa_clean(coordinates, lat_center, lon_center, label_escola):
       const maxTime = timestamps[timestamps.length - 1];
       const tripData = [{{ path: COORDINATES, timestamps: timestamps }}];
 
-      function createSimpleMarker(color, label) {{
+      function createMarker(color, label, icon) {{
           const el = document.createElement('div');
-          el.innerHTML = `<div style="background: white; color: #1a1b23; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: bold; border: 2px solid rgb(${{color}}); box-shadow: 0 2px 4px rgba(0,0,0,0.1);">📍 ${{label}}</div>`;
+          el.innerHTML = `
+            <div style="
+                background: white; 
+                color: #0f172a; 
+                padding: 8px 16px; 
+                border-radius: 100px; 
+                font-size: 13px; 
+                font-weight: 700; 
+                border: 3px solid rgb(${{color}}); 
+                box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+                display: flex;
+                align-items: center;
+                gap: 6px;
+            ">
+                <span style="font-size: 16px;">${{icon}}</span> ${{label}}
+            </div>`;
           return el;
       }}
 
-      new maplibregl.Marker({{element: createSimpleMarker('56, 90, 255', 'RESIDÊNCIA'), anchor: 'bottom'}})
+      new maplibregl.Marker({{element: createMarker('56, 90, 255', 'Residência', '🏠'), anchor: 'bottom'}})
           .setLngLat(COORDINATES[0]).addTo(map);
-      new maplibregl.Marker({{element: createSimpleMarker('253, 118, 26', '{label_escola}'), anchor: 'bottom'}})
+      new maplibregl.Marker({{element: createMarker('255, 202, 40', '{label_escola}', '🏫'), anchor: 'bottom'}})
           .setLngLat(COORDINATES[COORDINATES.length - 1]).addTo(map);
 
       const deckOverlay = new deck.MapboxOverlay({{ interleaved: false, layers: [] }});
@@ -205,11 +249,13 @@ def render_mapa_clean(coordinates, lat_center, lon_center, label_escola):
             layers: [
               new PathLayer({{
                 id: 'route-core', data: segmentedPath, getPath: d => d.path,
-                getColor: d => d.color, getWidth: 8, widthUnits: 'pixels'
+                getColor: d => d.color, getWidth: 8, widthUnits: 'pixels',
+                capRounded: true, jointRounded: true
               }}),
               new TripsLayer({{
                 id: 'route-pulse', data: tripData, getPath: d => d.path, getTimestamps: d => d.timestamps,
-                getColor: [255, 255, 255, 255], opacity: 1, widthMinPixels: 4, trailLength: maxTime * 0.4, currentTime: currentTime
+                getColor: [255, 255, 255, 255], opacity: 1, widthMinPixels: 4, trailLength: maxTime * 0.4, currentTime: currentTime,
+                capRounded: true, jointRounded: true
               }})
             ]
           }});
@@ -221,114 +267,116 @@ def render_mapa_clean(coordinates, lat_center, lon_center, label_escola):
     </body>
     </html>
     """
-    components.html(html, height=570, scrolling=False)
+    components.html(html, height=600, scrolling=False)
 
 
 # =============================================================================
-# TELA 1: FORMULÁRIO DE ENTRADA (O seu Split Screen Design)
+# TELA 1: FORMULÁRIO DE ENTRADA (Criativo e Sólido)
 # =============================================================================
 if st.session_state.tela_atual == 1:
     
-    col_left, col_right = st.columns([1, 1.2], gap="large")
+    col_left, col_spacer, col_right = st.columns([1.1, 0.1, 1.2])
 
-    # --- LADO ESQUERDO (Apresentação GovTech) ---
+    # --- LADO ESQUERDO (Painel Criativo Sólido) ---
     with col_left:
         st.markdown("""
         <div class="left-panel">
-            <div class="bg-shape"></div>
-            <h1>Bem-vindo ao SysPlan.</h1>
-            <p>Registre os detalhes da residência de forma rápida e segura. Nosso sistema matemático avalia as vagas e traça a rota escolar automaticamente.</p>
+            <div class="geo-shape-1"></div>
+            <div class="geo-shape-2"></div>
+            <div class="geo-shape-3"></div>
+            <h1>Logística<br>Inteligente.</h1>
+            <p>Otimização matemática em tempo real para a gestão educacional. Insira os dados para calcular a rota mais eficiente utilizando o motor CBC/PuLP.</p>
         </div>
         """, unsafe_allow_html=True)
 
-    # --- LADO DIREITO (Wizard Form) ---
+    # --- LADO DIREITO (Formulário Flat) ---
     with col_right:
         st.markdown("""
         <div style="margin-bottom: 24px;">
-            <div style="width: 100%; background-color: #e8e7f3; height: 8px; border-radius: 99px; margin-bottom: 24px;">
-                <div style="background-color: #385aff; height: 100%; width: 33%; border-radius: 99px;"></div>
-            </div>
-            <h2 style="font-family: 'Inter', sans-serif; font-size: 28px; font-weight: 700; color: #1a1b23; margin-bottom: 4px;">Detalhes do Aluno</h2>
-            <p style="font-family: 'Inter', sans-serif; color: #434655; font-size: 15px; margin-bottom: 0;">Forneça as informações abaixo. Nosso motor fará o cruzamento com o zoneamento.</p>
+            <h2 style="font-size: 28px; font-weight: 800; color: #0f172a; margin-bottom: 8px;">Nova Matrícula</h2>
+            <p style="color: #64748b; font-size: 15px; margin-bottom: 0;">Preencha as informações para acionar o otimizador.</p>
         </div>
         """, unsafe_allow_html=True)
         
-        # Container com borda para o formulário
-        with st.container():
-            st.markdown('<div class="wizard-card">', unsafe_allow_html=True)
+        # O formulário com visual SaaS
+        st.markdown('<div class="form-card">', unsafe_allow_html=True)
+        
+        nome_crianca = st.text_input("Identificação do Aluno", placeholder="Ex: Guilherme Cardoso")
+        endereco = st.text_input("Logradouro (Rua, Número, Bairro)", placeholder="Ex: Rua XV de Novembro, 100")
             
-            nome_crianca = st.text_input("Nome Completo da Criança", placeholder="Ex: Maria Clara Silva")
-            endereco = st.text_input("Endereço Residencial", placeholder="Rua, Número, Bairro - Ibirama")
-                
-            c_turma, c_turno = st.columns(2)
-            with c_turma:
-                turma = st.selectbox("Ano Escolar", options=[1,2,3,4,5,6,7,8,9], index=3)
-            with c_turno:
-                turno = st.selectbox("Turno Desejado", options=[("Matutino", 1), ("Vespertino", 2), ("Noturno", 3)], format_func=lambda x: x[0])
-                
-            st.write("")
+        c_turma, c_turno = st.columns(2)
+        with c_turma:
+            turma = st.selectbox("Ano Escolar", options=[1,2,3,4,5,6,7,8,9], index=3)
+        with c_turno:
+            turno = st.selectbox("Turno Letivo", options=[("Matutino", 1), ("Vespertino", 2), ("Noturno", 3)], format_func=lambda x: x[0])
             
-            # Botão de Busca
-            if st.button("Continuar e Traçar Rota"):
-                if nome_crianca == "" or endereco == "":
-                    st.error("Por favor, preencha o nome e o endereço da criança.")
-                else:
-                    with st.spinner("Sincronizando com motor de alocação..."):
-                        try:
-                            # Geocoding invisível
-                            from geopy.geocoders import Nominatim
-                            geolocator = Nominatim(user_agent="nexus_route_udesc")
+        # Botão Flat 3D
+        if st.button("Executar Simulação Matemática"):
+            if nome_crianca == "" or endereco == "":
+                st.error("⚠️ É obrigatório preencher a Identificação e o Logradouro.")
+            else:
+                with st.spinner("🤖 Processando Pesquisa Operacional e Geocodificação..."):
+                    try:
+                        from geopy.geocoders import Nominatim
+                        geolocator = Nominatim(user_agent="nexus_route_udesc")
+                        
+                        busca_completa = f"{endereco}, Ibirama, SC, Brasil"
+                        location = geolocator.geocode(busca_completa, timeout=5)
+                        
+                        if location:
+                            lat_final = location.latitude
+                            lon_final = location.longitude
+                        else:
+                            st.toast("Geocodificação imprecisa. Assumindo marco zero da região.", icon="🧭")
+                            lat_final = -27.057617
+                            lon_final = -49.522895
+                            time.sleep(1)
                             
-                            busca_completa = f"{endereco}, Ibirama, SC, Brasil"
-                            location = geolocator.geocode(busca_completa, timeout=5)
-                            
-                            if location:
-                                lat_final = location.latitude
-                                lon_final = location.longitude
-                            else:
-                                st.toast("Endereço exato não encontrado. Utilizando referência central.", icon="⚠️")
-                                lat_final = -27.057617
-                                lon_final = -49.522895
-                                time.sleep(1)
-                                
-                            st.session_state.payload = {
-                                "id_aluno": nome_crianca,
-                                "lat": lat_final,
-                                "lon": lon_final,
-                                "turma": turma,
-                                "turno": turno[1]
-                            }
-                            ir_para_tela_2()
-                            st.rerun() 
-                            
-                        except Exception as e:
-                            st.error("Erro no servidor de mapas global.")
-                            
-            st.markdown('</div>', unsafe_allow_html=True)
+                        st.session_state.payload = {
+                            "id_aluno": nome_crianca,
+                            "lat": lat_final,
+                            "lon": lon_final,
+                            "turma": turma,
+                            "turno": turno[1]
+                        }
+                        ir_para_tela_2()
+                        st.rerun() 
+                        
+                    except Exception as e:
+                        st.error("Erro na API de conversão de endereços.")
+                        
+        st.markdown('</div>', unsafe_allow_html=True)
 
 # =============================================================================
-# TELA 2: PROCESSAMENTO E RESULTADO (O Mapa e as Métricas)
+# TELA 2: PROCESSAMENTO E RESULTADO (Dash limpo)
 # =============================================================================
 elif st.session_state.tela_atual == 2:
     
-    st.button("← Voltar para Nova Busca", on_click=voltar_tela_1)
-    st.divider()
+    # Botão de voltar discreto no topo
+    st.button("← Nova Simulação", on_click=voltar_tela_1)
 
-    with st.spinner("Calculando a melhor rota via modelo PuLP..."):
+    with st.spinner("Conectando ao OSRM e renderizando topologia..."):
         try:
             response = requests.post(API_URL, json=st.session_state.payload, headers=HEADERS_API, timeout=15)
 
             if response.status_code == 200:
                 dados = response.json()
                 
-                st.success(f"✅ **Processo Concluído:** {dados['aluno_id']} foi direcionado(a) com base no zoneamento matemático.")
+                # Banner de Sucesso Sólido
+                st.markdown(f"""
+                <div style="background-color: #dcfce7; border: 2px solid #22c55e; border-radius: 12px; padding: 16px 24px; margin-bottom: 24px; color: #166534; font-weight: 600; display: flex; align-items: center; gap: 12px;">
+                    <span style="font-size: 20px;">✅</span> Alocação Ótima: O aluno {dados['aluno_id']} foi direcionado matematicamente.
+                </div>
+                """, unsafe_allow_html=True)
                 
-                # Métricas
+                # Container Branco para as Métricas
+                st.markdown('<div class="form-card" style="padding: 24px; margin-bottom: 24px;">', unsafe_allow_html=True)
                 c1, c2, c3, c4 = st.columns(4)
-                c1.metric("Região Demográfica", f"Zona {dados['zona_identificada']}")
-                c2.metric("Instituição Recomendada", dados['escola_alocada'])
+                c1.metric("Setor Demográfico", f"ZONA {dados['zona_identificada']}")
+                c2.metric("Instituição Alocada", dados['escola_alocada'])
                 c3.metric("Extensão da Rota", f"{dados['distancia_km']} km")
                 c4.metric("Deslocamento", f"{dados['tempo_min']} min")
+                st.markdown('</div>', unsafe_allow_html=True)
                 
                 # Renderiza o mapa Deck.gl
                 coords = dados['rota_geojson']['coordinates']
@@ -340,7 +388,7 @@ elif st.session_state.tela_atual == 2:
                 render_mapa_clean(coords, lat_center, lon_center, dados['escola_alocada'].upper())
 
             else:
-                st.error(f"O modelo matemático retornou um erro. Código: {response.status_code}")
+                st.error(f"Falha de cálculo no servidor. Código: {response.status_code}")
 
         except requests.exceptions.RequestException:
-            st.error("Servidor OSRM / FastAPI offline.")
+            st.error("Servidor Offline. Verifique a porta 80 da Oracle.")

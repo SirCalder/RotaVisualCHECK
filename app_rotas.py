@@ -144,22 +144,38 @@ def render_mapa_clean(coordinates, lat_center, lon_center, label_escola, coords_
       const maxTime = timestamps[timestamps.length - 1];
       const tripData = [{{ path: COORDINATES, timestamps: timestamps }}];
 
-      function createMarker(color, label, icon) {{
+      // Ícones SVG duotone (contorno sólido + preenchimento translúcido na cor da marca)
+      const ICON_RESIDENCIA = (hex) => `
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 11.2L12 4l8 7.2V19a1 1 0 0 1-1 1h-4.2a1 1 0 0 1-1-1v-4.6h-3.6V19a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-7.8z"
+                fill="${{hex}}" fill-opacity="0.16" stroke="${{hex}}" stroke-width="1.7"
+                stroke-linejoin="round" stroke-linecap="round"/>
+        </svg>`;
+      const ICON_ESCOLA = (hex) => `
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 3.2l9 4.4-9 4.4-9-4.4 9-4.4z" fill="${{hex}}" fill-opacity="0.16" stroke="${{hex}}"
+                stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/>
+          <path d="M5.2 9.3V15c0 1.5 3 2.9 6.8 2.9s6.8-1.4 6.8-2.9V9.3" fill="${{hex}}" fill-opacity="0.1"
+                stroke="${{hex}}" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"/>
+          <path d="M20.3 7.8v6.1" stroke="${{hex}}" stroke-width="1.7" stroke-linecap="round"/>
+        </svg>`;
+
+      function createMarker(color, label, iconFn, hex) {{
           const el = document.createElement('div');
           el.innerHTML = `
             <div style="
                 background: white; color: #0f172a; padding: 8px 16px; border-radius: 100px; 
                 font-size: 13px; font-weight: 700; border: 3px solid rgb(${{color}}); 
-                box-shadow: 0 8px 16px rgba(15,23,42,0.12); display: flex; align-items: center; gap: 6px;
+                box-shadow: 0 8px 16px rgba(15,23,42,0.12); display: flex; align-items: center; gap: 8px;
             ">
-                <span style="font-size: 16px;">${{icon}}</span> ${{label}}
+                <span style="display:flex; align-items:center; flex-shrink:0;">${{iconFn(hex)}}</span> ${{label}}
             </div>`;
           return el;
       }}
 
-      new maplibregl.Marker({{element: createMarker('56, 90, 255', 'Residência', '📍'), anchor: 'bottom'}})
+      new maplibregl.Marker({{element: createMarker('56, 90, 255', 'Residência', ICON_RESIDENCIA, '#385aff'), anchor: 'bottom'}})
           .setLngLat(COORDINATES[0]).addTo(map);
-      new maplibregl.Marker({{element: createMarker('255, 107, 53', '{label_escola}', '🏫'), anchor: 'bottom'}})
+      new maplibregl.Marker({{element: createMarker('255, 107, 53', '{label_escola}', ICON_ESCOLA, '#ff6b35'), anchor: 'bottom'}})
           .setLngLat(COORDINATES[COORDINATES.length - 1]).addTo(map);
 
       const deckOverlay = new deck.MapboxOverlay({{ interleaved: false, layers: [] }});
@@ -295,7 +311,13 @@ elif st.session_state.tela_atual == 2:
                 
                 st.markdown(f"""
                 <div style="background: linear-gradient(90deg, #385aff 0%, #00d4ff 100%); border-radius: 12px; padding: 16px 24px; margin-bottom: 24px; color: #ffffff; font-weight: 700; display: flex; align-items: center; gap: 12px; box-shadow: 0 10px 20px -5px rgba(56,90,255,0.3);">
-                    <span style="font-size: 20px;">✓</span> Alocação Ótima: O aluno {dados['aluno_id']} foi direcionado com sucesso.
+                    <span style="display:flex; align-items:center; flex-shrink:0;">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="9.5" fill="#ffffff" fill-opacity="0.22" stroke="#ffffff" stroke-width="1.7"/>
+                            <path d="M7.5 12.3l2.8 2.8 6.2-6.6" stroke="#ffffff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </span>
+                    Alocação Ótima: O aluno {dados['aluno_id']} foi direcionado com sucesso.
                 </div>
                 """, unsafe_allow_html=True)
                 

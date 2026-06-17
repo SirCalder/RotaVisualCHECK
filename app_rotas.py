@@ -465,21 +465,6 @@ if st.session_state.tela_atual == 1:
 </div>
 </div>
 
-<div class="stats-box">
-<div class="stat">
-<h4>+10k</h4>
-<span>Rotas</span>
-</div>
-<div class="stat">
-<h4>99%</h4>
-<span>Precisão</span>
-</div>
-<div class="stat">
-<h4>&lt;1s</h4>
-<span>Cálculo</span>
-</div>
-</div>
-</div>
 """, unsafe_allow_html=True)
 
     with col_right:
